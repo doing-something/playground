@@ -1,5 +1,5 @@
-import { 
-    createCanvas, 
+import {
+    createCanvas,
     createHiddenCanvas,
     fillEllipse
 } from '../helpers/canvas';
@@ -8,7 +8,7 @@ import useMouseState from '../hooks/useMouseState';
 function Basic() {
     const { ctx } = createCanvas('basic');
     const { canvas: hiddenCanvas, ctx: hiddenCtx } = createHiddenCanvas('hidden');
-    
+
     function draw(v) {
         const { mouseX, mouseY } = v;
         console.log('ctx', ctx)
@@ -26,7 +26,7 @@ function Basic() {
         draw
     });
 
-    
+
     hiddenCanvas.style.left = -window.innerWidth + 'px';
 
     return (
