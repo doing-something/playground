@@ -1,12 +1,16 @@
 import { useRef, useEffect } from 'react'
-import { Draw, Options } from './scheme'
+import useMouse from './useMouse'
+import { Draw, Options, CanvasRef } from './scheme'
 
-interface CanvasRef {
-    current: HTMLCanvasElement;
+interface Option {
+    preDraw?: Options['preDraw']
+    postDraw?: Options['postDraw']
 }
 
 interface UseCanvas {
-    (draw: Draw, options: Options): CanvasRef;
+    (draw: Draw, options: Option): {
+        canvasRef: CanvasRef,
+    };
 }
 
 const _preDraw = context => {
@@ -16,9 +20,21 @@ const _preDraw = context => {
 const _postDraw = () => {
 }
 
-const useCanvas: UseCanvas = (draw, options) => {
+const useCanvas: UseCanvas = (
+    draw, 
+    { preDraw = _preDraw, postDraw = _postDraw}
+) => {
     const canvasRef = useRef<HTMLCanvasElement>(null)
-    const { preDraw = _preDraw, postDraw = _postDraw } = options
+    const mouseRef = useRef({
+        x: null,
+        y: null
+    })
+    const { mouseX, mouseY } = useMouse(canvasRef)
+
+    useEffect(() => {
+        mouseRef.current.x = mouseX
+        mouseRef.current.y = mouseY
+    }, [mouseX, mouseY])
 
     useEffect(() => {
         const canvas = canvasRef.current
@@ -29,7 +45,11 @@ const useCanvas: UseCanvas = (draw, options) => {
         const render = () => {
             frameCount++
             preDraw(context)
-            draw(context, frameCount)
+
+            draw(context, {
+                frameCount,
+                mouse: mouseRef.current,
+            })
             postDraw()
             animationFrameId = window.requestAnimationFrame(render)
         }
@@ -41,7 +61,9 @@ const useCanvas: UseCanvas = (draw, options) => {
         }
     }, [draw])
 
-    return canvasRef
+    return { 
+        canvasRef
+    }
 }
 
 export default useCanvas
