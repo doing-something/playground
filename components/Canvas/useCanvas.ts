@@ -14,7 +14,6 @@ interface UseCanvas {
 }
 
 const _preDraw = context => {
-    context.clearRect(0, 0, context.canvas.width, context.canvas.height)
 }
 
 const _postDraw = () => {
