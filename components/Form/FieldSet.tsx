@@ -1,7 +1,11 @@
-import React from 'react'
+import React, { FC } from 'react'
 import styled from '@emotion/styled'
 import { css } from '@emotion/react'
 import { baseColor, textColor } from '../../styles/constants'
+
+interface Prop {
+    title?: string
+}
 
 const style = css`
     display: flex;
@@ -23,10 +27,10 @@ const Wrapper = styled.div`
     ${style};
 `
 
-const FieldSet = ({title, children }) => {
+const FieldSet: FC<Prop> = ({ title, children }) => {
     return (
         <>
-            <Title>{title}</Title>
+            {title && <Title>{title}</Title>}
             <Wrapper>{children}</Wrapper>
         </>
     )
