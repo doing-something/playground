@@ -10,11 +10,14 @@ interface UseMouse {
 
 const useMouse: UseMouse = canvasRef => {
     const [{ mouseX, mouseY }, setState] = useState({ mouseX: null, mouseY: null })
-
+    
+    
     function handleMouseMove(e) {
+        const { x, y } = this;
+
         setState({
-            mouseX: e.clientX,
-            mouseY: e.clientY,
+            mouseX: e.clientX - x,
+            mouseY: e.clientY - y,
         })
     }
 
@@ -26,14 +29,16 @@ const useMouse: UseMouse = canvasRef => {
 
     useEffect(() => {
         const canvas: HTMLCanvasElement = canvasRef.current
+        const { x = 0, y = 0 } = canvas.getBoundingClientRect();
+        const boundMouseMove = handleMouseMove.bind({ x, y })
 
-        canvas.addEventListener('mousemove', handleMouseMove)
+        canvas.addEventListener('mousemove', boundMouseMove)
         canvas.addEventListener('mousedown', handleMouseDown)
         canvas.addEventListener('mouseup', handleMouseUp)
         canvas.addEventListener('mouseout', handleMouseOut)
 
         return () => {
-            canvas.removeEventListener('mousemove', handleMouseMove)
+            canvas.removeEventListener('mousemove', boundMouseMove)
             canvas.removeEventListener('mousedown', handleMouseDown)
             canvas.removeEventListener('mouseup', handleMouseUp)
             canvas.removeEventListener('mouseout', handleMouseOut)
