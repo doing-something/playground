@@ -1,7 +1,7 @@
 import React from 'react'
 import FieldSet from '../../../components/Form/FieldSet'
-import Checkbox from '../../../components/Form/Checkbox'
 import TextField from '../../../components/Form/TextField'
+import ColorPicker from '../../../components/ColorPicker'
 
 function Form() {
     return (
@@ -10,7 +10,7 @@ function Form() {
                 <TextField name="size" />
             </FieldSet>
             <FieldSet title="Color">
-                <TextField name="color" />
+                <ColorPicker />
             </FieldSet>
         </form>
     )
