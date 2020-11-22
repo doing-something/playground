@@ -2,6 +2,7 @@ import React from 'react'
 import Canvas, { fillEllipse } from '../../../components/Canvas'
 import { Draw } from '../../../components/Canvas/scheme'
 import { CanvasWrapper, Editor } from '../../../components/Layout'
+import Form from './Form'
 import { isNil } from '../../../helpers/util'
 
 function App() {
@@ -14,8 +15,8 @@ function App() {
             ctx,
             x: mouseX,
             y: mouseY,
-            width: 20, 
-            height: 20
+            width: 50, 
+            height: 50
         })
     }
 
@@ -24,7 +25,7 @@ function App() {
             <CanvasWrapper>
                 <Canvas draw={draw} width={500} height={500} />
             </CanvasWrapper>
-            <Editor>sss</Editor>
+            <Editor><Form /></Editor>
         </>
     )
 }
