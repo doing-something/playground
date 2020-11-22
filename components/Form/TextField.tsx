@@ -5,6 +5,7 @@ import { baseColor, textColor } from '../../styles/constants'
 interface Prop {
     name: string;
     placeholder?: string;
+    defaultValue?: string;
 }
 
 const Input = styled.input`
@@ -16,11 +17,12 @@ const Input = styled.input`
     background: none;
 `
 
-const TextField: FC<Prop> = ({ name, placeholder = '' }) => {
+const TextField: FC<Prop> = ({ name, placeholder = '', defaultValue = '' }) => {
     return (
         <Input 
             type="text" 
             name={name} 
+            defaultValue={defaultValue}
             placeholder={placeholder} 
         />
     )

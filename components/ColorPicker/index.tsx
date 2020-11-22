@@ -31,9 +31,9 @@ const ColorPicker: FC = () => {
     const [{ displayColorPicker, color }, setState] = useState({
         displayColorPicker: false,
         color: {
-            r: '40',
-            g: '40',
-            b: '46',
+            r: '0',
+            g: '0',
+            b: '0',
             a: '1',
         }
     })
@@ -69,6 +69,7 @@ const ColorPicker: FC = () => {
                     background: `rgba(${r}, ${g}, ${b}, ${a})`
                 }}
             />
+            <input type="hidden" value={`rgba(${r}, ${g}, ${b}, ${a})`} name="color" />
             {displayColorPicker ? <Wrapper>
                 <Cover onClick={close} />
                 <ChromePicker color={color} onChange={handleChange} />
