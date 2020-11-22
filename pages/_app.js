@@ -1,5 +1,6 @@
 import dynamic from 'next/dynamic';
 import '../styles/globals.css';
+import Layout from '../components/Layout'
 
 const DynamicComponentWithNoSSR = dynamic(() =>
   import('../components/Wrapper'),
@@ -8,7 +9,9 @@ const DynamicComponentWithNoSSR = dynamic(() =>
 
 function MyApp({ Component, pageProps }) {
   return <DynamicComponentWithNoSSR>
-    <Component {...pageProps} />
+    <Layout>
+      <Component {...pageProps} />
+    </Layout>
   </DynamicComponentWithNoSSR>;
 }
 

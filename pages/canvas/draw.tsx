@@ -5,7 +5,7 @@ import { isNil } from '../../helpers/util'
 
 function App() {
     const draw: Draw = (ctx, { mouse: { x: mouseX, y: mouseY } }) => {
-        ctx.fillStyle = 'red'
+        ctx.fillStyle = 'rgba(255, 0, 0, .1)'
 
         if (isNil(mouseX) || isNil(mouseY)) return
 
@@ -18,11 +18,7 @@ function App() {
         })
     }
 
-    return <Canvas 
-        draw={draw} 
-        width={500} 
-        height={500} 
-    />
+    return <Canvas draw={draw} width={500} height={500} />
 }
 
 export default App
