@@ -1,6 +1,7 @@
 import React, { FC, useState } from 'react'
 import { ChromePicker } from 'react-color';
 import styled from '@emotion/styled'
+import useLayerPopup from '../../hooks/useLayerPopup'
 
 const ColorButton = styled.button`
     display: inline-block;
@@ -13,51 +14,22 @@ const ColorButton = styled.button`
     cursor: pointer;
 `
 
-const Wrapper = styled.div`
-    position: absolute;
-    z-index: 2;
-    margin-top: 30px;
-`
-
-const Cover = styled.div`
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-`
-
 const ColorPicker: FC = () => {
-    const [{ displayColorPicker, color }, setState] = useState({
-        displayColorPicker: false,
-        color: {
-            r: '0',
-            g: '0',
-            b: '0',
-            a: '1',
-        }
+    const { LayerPopup, open } = useLayerPopup({ custom: true })
+    const [color, setColor] = useState({
+        r: '0',
+        g: '0',
+        b: '0',
+        a: '1',
     })
     const { r, g, b, a } = color
 
     const handleClick = () => {
-        setState(prev => ({
-            ...prev,
-            displayColorPicker: !prev.displayColorPicker
-        }))
-    }
-
-    const close = () => {
-        setState(prev => ({
-            ...prev,
-            displayColorPicker: false
-        }))
+        open()
     }
     
     const handleChange = ({ rgb }) => {
-        setState(prev => ({
-            ...prev,
-            color: rgb
-        }))
+        setColor(rgb)
     }
 
     return (
@@ -70,10 +42,9 @@ const ColorPicker: FC = () => {
                 }}
             />
             <input type="hidden" value={`rgba(${r}, ${g}, ${b}, ${a})`} name="color" />
-            {displayColorPicker ? <Wrapper>
-                <Cover onClick={close} />
+            <LayerPopup>
                 <ChromePicker color={color} onChange={handleChange} />
-            </Wrapper> : null}
+            </LayerPopup>
         </>
     )
 }
