@@ -26,8 +26,6 @@ const ButtonElement = styled.button<StyleProp>`
     }
 `
 
-
-
 const Button: FC<ButtonProp> = ({ 
     type = 'button', 
     onClick = identity, 
