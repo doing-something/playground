@@ -6,7 +6,6 @@ import {
     Square,
     Triangle,
     Cross,
-    Moon
 } from './Shapes'
 import { InlineWrapper } from '../Wrapper'
 
@@ -31,7 +30,6 @@ const Shapes = [
     <Square light />,
     <Triangle light />,
     <Cross light />,
-    <Moon light />
 ]
 
 function renderShape(idx) {
@@ -39,7 +37,7 @@ function renderShape(idx) {
 }
 
 const ShapePicker: FC = () => {
-    const { LayerPopup, open } = useLayerPopup()
+    const { LayerPopup, open, close } = useLayerPopup()
 
     const [shape, setShape] = useState(Shape.circle)
 
@@ -49,6 +47,7 @@ const ShapePicker: FC = () => {
     
     const selectShape = (shape: Shape) => {
         setShape(shape)
+        close()
     }
 
     return (
@@ -64,7 +63,6 @@ const ShapePicker: FC = () => {
                     <Square margin onClick={() => selectShape(Shape.square)} />
                     <Triangle margin onClick={() => selectShape(Shape.triangle)} />
                     <Cross margin onClick={() => selectShape(Shape.cross)} />
-                    <Moon margin onClick={() => selectShape(Shape.moon)} />
                 </InlineWrapper>
             </LayerPopup>
         </>

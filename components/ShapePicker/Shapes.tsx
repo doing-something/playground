@@ -62,13 +62,3 @@ export const Cross = styled.div<StyleProp>`
     }
 `
 
-export const Moon = styled.div<StyleProp>`
-    width: ${size};
-    height: ${size};
-    margin-top: -3px;
-    margin-bottom: 0;
-    margin-right: ${({ margin }) => margin ? '1rem' : '0px'};
-    margin-left: ${({ margin }) => margin ? '1rem' : '0px'};
-    border-radius: 50%;
-    box-shadow: ${({ light }) => `${getPixel(sizeNum, 0.2)} ${getPixel(sizeNum, 0.2)} 0 0 ${light ? lightColor : color}`};
-`
