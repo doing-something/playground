@@ -4,10 +4,11 @@ import TextField from '../../../components/Form/TextField'
 import ColorPicker from '../../../components/ColorPicker'
 import ShapePicker from '../../../components/ShapePicker'
 import Button from '../../../components/Button'
+import { InlineWrapper } from '../../../components/Wrapper'
 import { serializeForm } from '../../../helpers/util'
 
-function Form({ onSubmit, size }) {
-    function handleSubmit(e) {
+function Form({ onSubmit, onReset, size }) {
+    function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
 
         onSubmit && onSubmit(serializeForm(e.currentTarget))
@@ -25,7 +26,10 @@ function Form({ onSubmit, size }) {
                 <ShapePicker />
             </FieldSet>
             <FieldSet>
-                <Button type="submit" block primary>Apply</Button>
+                <InlineWrapper full>
+                    <Button type="button" block onClick={onReset}>Reset</Button>
+                    <Button type="submit" block primary>Apply</Button>
+                </InlineWrapper>
             </FieldSet>
         </form>
     )

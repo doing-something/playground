@@ -7,7 +7,8 @@ interface CanvasProp {
     preDraw?: Options['preDraw']
     postDraw?: Options['postDraw']
     width?: number
-    height?: number
+    height?: number,
+    key?: number
 }
 
 const Canvas = ({ 

@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import styled from '@emotion/styled'
-import { baseColor, textColor } from '../styles/constants'
+import { baseColor, primary as primaryColor, secondary } from '../styles/constants'
 import { identity } from '../helpers/util'
 
 interface StyleProp {
@@ -17,12 +17,12 @@ const ButtonElement = styled.button<StyleProp>`
     padding: 1rem;
     font-size: 1rem;
     border: 1px solid ${baseColor};
-    color: ${baseColor};
-    background: ${(props) => (props.primary ? 'rgba(255, 255, 255, .9)' : 'none')};
+    color: ${({ primary }) => (primary ? '#fff' : baseColor)};
+    background: ${({ primary }) => (primary ? primaryColor : secondary)};
     cursor: pointer;
     transition: background 70ms cubic-bezier(0, 0, .38, .9);
     &:hover {
-        background-color: rgba(255, 255, 255, 1);
+        opacity: 0.8;
     }
 `
 
