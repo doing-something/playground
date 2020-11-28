@@ -4,26 +4,50 @@ import { CanvasRef } from './scheme'
 interface UseMouse {
     (canvasRef?: CanvasRef): {
         mouseX?: number,
-        mouseY?: number
+        mouseY?: number,
+        mousePresssed?: boolean,
+        mouseReleased?: boolean
     }
 }
 
 const useMouse: UseMouse = canvasRef => {
-    const [{ mouseX, mouseY }, setState] = useState({ mouseX: null, mouseY: null })
+    const [{ 
+        mouseX, 
+        mouseY,
+        mousePresssed,
+        mouseReleased
+    }, setState] = useState({ 
+        mouseX: null, 
+        mouseY: null,
+        mousePresssed: false,
+        mouseReleased: false
+    })
     
     
     function handleMouseMove(e) {
         const { x, y } = this;
 
-        setState({
+        setState(prev => ({
+            ...prev,
             mouseX: e.clientX - x,
             mouseY: e.clientY - y,
-        })
+        }))
     }
 
-    function handleMouseDown(e) {}
+    function handleMouseDown(e) {
+        setState(prev => ({
+            ...prev,
+            mousePresssed: true,
+        }))
+    }
 
-    function handleMouseUp(e) {}
+    function handleMouseUp(e) {
+        setState(prev => ({
+            ...prev,
+            mousePresssed: false,
+            mouseReleased: true,
+        }))
+    }
 
     function handleMouseOut(e) {}
 
@@ -47,7 +71,9 @@ const useMouse: UseMouse = canvasRef => {
 
     return {
         mouseX,
-        mouseY
+        mouseY,
+        mousePresssed,
+        mouseReleased
     }
 }
 

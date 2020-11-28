@@ -3,7 +3,8 @@ export interface Draw {
         frameCount: number,
         mouse?: {
             x?: number,
-            y?: number
+            y?: number,
+            mousePresssed?: boolean
         },
     }): void;
 }

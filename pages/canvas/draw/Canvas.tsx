@@ -54,7 +54,8 @@ function renderShape({
 }
 
 const CanvasArea: FC<Prop> = ({ size, color, shape }) => {
-    const draw: Draw = (ctx, { mouse: { x: mouseX, y: mouseY } }) => {
+    const draw: Draw = (ctx, { mouse: { x: mouseX, y: mouseY, mousePresssed } }) => {
+        if (!mousePresssed) return
         ctx.fillStyle = color
 
         if (isNil(mouseX) || isNil(mouseY)) return

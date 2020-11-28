@@ -26,14 +26,16 @@ const useCanvas: UseCanvas = (
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const mouseRef = useRef({
         x: null,
-        y: null
+        y: null,
+        mousePresssed: false
     })
-    const { mouseX, mouseY } = useMouse(canvasRef)
+    const { mouseX, mouseY, mousePresssed } = useMouse(canvasRef)
 
     useEffect(() => {
         mouseRef.current.x = mouseX
         mouseRef.current.y = mouseY
-    }, [mouseX, mouseY])
+        mouseRef.current.mousePresssed = mousePresssed
+    }, [mouseX, mouseY, mousePresssed])
 
     useEffect(() => {
         const canvas = canvasRef.current
