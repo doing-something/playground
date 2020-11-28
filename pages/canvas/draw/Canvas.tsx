@@ -1,6 +1,6 @@
-import React, { FC, useState } from 'react'
+import React, { FC } from 'react'
 import { CanvasWrapper } from '../../../components/Layout'
-import Canvas, { fillEllipse } from '../../../components/Canvas'
+import Canvas, { fillEllipse, fillSquare, fillTriangle, cross } from '../../../components/Canvas'
 import { Draw } from '../../../components/Canvas/scheme'
 import { Shape } from '../../../components/ShapePicker'
 import { isNil } from '../../../helpers/util'
@@ -13,18 +13,58 @@ interface Prop {
     shape: shapeType;
 }
 
+function renderShape({
+    ctx, x, y, size, shape
+}) {
+    switch(shape) {
+        case Shape.square:
+            return fillSquare({
+                ctx,
+                x,
+                y,
+                width: size, 
+                height: size
+            })
+        case Shape.triangle:
+            return fillTriangle({
+                ctx, 
+                x1: x, 
+                y1: y, 
+                x2: x + (size / 2),
+                y2: y + (size / 2), 
+                x3: x - (size / 2), 
+                y3: y + (size / 2), 
+            })
+        case Shape.cross:
+            return cross({
+                ctx,
+                x,
+                y,
+                size
+            })
+        default:
+            return fillEllipse({
+                ctx,
+                x,
+                y,
+                width: size, 
+                height: size
+            })
+    }
+}
+
 const CanvasArea: FC<Prop> = ({ size, color, shape }) => {
     const draw: Draw = (ctx, { mouse: { x: mouseX, y: mouseY } }) => {
         ctx.fillStyle = color
 
         if (isNil(mouseX) || isNil(mouseY)) return
-
-        fillEllipse({
+        
+        renderShape({
             ctx,
             x: mouseX,
             y: mouseY,
-            width: size, 
-            height: size
+            size,
+            shape
         })
     }
 

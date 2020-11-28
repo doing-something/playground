@@ -15,7 +15,7 @@ function App() {
         setState(prev => ({
             size: size || prev.size,
             color: color || prev.color,
-            shape
+            shape: Number(shape)
         }))
     }
 
