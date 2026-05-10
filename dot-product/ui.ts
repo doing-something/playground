@@ -1,8 +1,4 @@
-import {
-  DEFAULT_ROTATION_DEGREES,
-  getMatchingPresetLabel,
-  matrixPresets,
-} from "./data.js";
+import { getMatchingPresetLabel, matrixPresets } from "./data.js";
 import { createRotationMatrix, getRotationDegrees } from "./math.js";
 import type { Matrix } from "./types.js";
 
@@ -16,9 +12,7 @@ type MatrixInputMap = {
 };
 
 type RotationControls = {
-  resetButton: HTMLButtonElement;
-  slider: HTMLInputElement;
-  value: HTMLElement;
+  shortcutButtons: HTMLButtonElement[];
 };
 
 /**
@@ -40,15 +34,11 @@ export function setupMatrixControls(
   const initialRotationDegrees = getRotationDegrees(initialMatrix);
 
   writeMatrixToInputs(inputs, initialMatrix);
-  updateRotationSlider(rotationControls, DEFAULT_ROTATION_DEGREES);
+  updateRotationShortcutSelection(rotationControls, initialRotationDegrees);
   renderPresetButtons(presetContainer, presetButtons, (presetMatrix, presetLabel) => {
-    const nextMatrix = presetLabel === "회전"
-      ? createRotationMatrix(readRotationSliderValue(rotationControls.slider))
-      : presetMatrix;
-
-    writeMatrixToInputs(inputs, nextMatrix);
+    writeMatrixToInputs(inputs, presetMatrix);
     applyMatrixChange(
-      nextMatrix,
+      presetMatrix,
       presetLabel,
       preview,
       presetButtons,
@@ -59,7 +49,7 @@ export function setupMatrixControls(
   updateMatrixPreview(preview, initialMatrix);
   updatePresetSelection(presetButtons, initialActivePreset);
   if (initialRotationDegrees !== null) {
-    updateRotationSlider(rotationControls, initialRotationDegrees);
+    updateRotationShortcutSelection(rotationControls, initialRotationDegrees);
   }
 
   const emitMatrixChange = () => {
@@ -78,31 +68,21 @@ export function setupMatrixControls(
     input.addEventListener("input", emitMatrixChange);
   }
 
-  rotationControls.slider.addEventListener("input", () => {
-    const nextMatrix = createRotationMatrix(readRotationSliderValue(rotationControls.slider));
-    writeMatrixToInputs(inputs, nextMatrix);
-    applyMatrixChange(
-      nextMatrix,
-      "회전",
-      preview,
-      presetButtons,
-      rotationControls,
-      onMatrixChange,
-    );
-  });
-
-  rotationControls.resetButton.addEventListener("click", () => {
-    const nextMatrix = createRotationMatrix(0);
-    writeMatrixToInputs(inputs, nextMatrix);
-    applyMatrixChange(
-      nextMatrix,
-      getActivePresetLabel(nextMatrix),
-      preview,
-      presetButtons,
-      rotationControls,
-      onMatrixChange,
-    );
-  });
+  for (const button of rotationControls.shortcutButtons) {
+    button.addEventListener("click", () => {
+      const angle = Number(button.dataset.angle);
+      const nextMatrix = createRotationMatrix(angle);
+      writeMatrixToInputs(inputs, nextMatrix);
+      applyMatrixChange(
+        nextMatrix,
+        null,
+        preview,
+        presetButtons,
+        rotationControls,
+        onMatrixChange,
+      );
+    });
+  }
 }
 
 /**
@@ -138,13 +118,13 @@ function formatNumber(value: number): string {
 }
 
 /**
- * 프리셋 상태, 회전 슬라이더, 미리보기를 한 번에 갱신하고 콜백을 호출한다.
+ * 프리셋 상태, 회전 버튼 상태, 미리보기를 한 번에 갱신하고 콜백을 호출한다.
  *
  * @param matrix 현재 반영할 행렬
  * @param activePresetLabel 활성 프리셋 이름. 프리셋이 없으면 null
  * @param preview 행렬 미리보기 요소
  * @param presetButtons 프리셋 버튼 매핑
- * @param rotationControls 회전 슬라이더와 각도 표시 요소
+ * @param rotationControls 회전 각도 버튼 요소
  * @param onMatrixChange 상태 변경 콜백
  */
 function applyMatrixChange(
@@ -160,9 +140,7 @@ function applyMatrixChange(
 
   updateMatrixPreview(preview, matrix);
   updatePresetSelection(presetButtons, activePresetLabel);
-  if (rotationDegrees !== null) {
-    updateRotationSlider(rotationControls, rotationDegrees);
-  }
+  updateRotationShortcutSelection(rotationControls, rotationDegrees);
   onMatrixChange(matrix, transformName);
 }
 
@@ -250,29 +228,23 @@ function getPresetContainer(): HTMLElement {
 }
 
 /**
- * 회전 각도 슬라이더와 각도 표시 요소를 DOM에서 찾는다.
+ * 회전 각도 버튼들을 DOM에서 찾는다.
  *
- * @returns 회전 슬라이더 관련 요소 묶음
+ * @returns 회전 컨트롤 요소 묶음
  * @throws {Error} 필요한 회전 컨트롤 요소를 찾지 못한 경우
  */
 function getRotationControls(): RotationControls {
-  const resetButton = document.getElementById("rotation-reset");
-  const slider = document.getElementById("rotation-angle");
-  const value = document.getElementById("rotation-angle-value");
+  const shortcutButtons = Array.from(
+    document.querySelectorAll<HTMLButtonElement>(".rotation-shortcut"),
+  );
 
-  if (!(resetButton instanceof HTMLButtonElement)) {
-    throw new Error("회전 초기화 버튼을 찾을 수 없습니다.");
+  if (shortcutButtons.length === 0) {
+    throw new Error("회전 빠른 각도 버튼을 찾을 수 없습니다.");
   }
 
-  if (!(slider instanceof HTMLInputElement)) {
-    throw new Error("회전 각도 슬라이더를 찾을 수 없습니다.");
-  }
-
-  if (!(value instanceof HTMLElement)) {
-    throw new Error("회전 각도 표시 요소를 찾을 수 없습니다.");
-  }
-
-  return { resetButton, slider, value };
+  return {
+    shortcutButtons,
+  };
 }
 
 /**
@@ -325,13 +297,11 @@ function updatePresetSelection(
 /**
  * 현재 행렬이 어떤 프리셋에 해당하는지 판단한다.
  *
- * 정확히 일치하는 프리셋이 우선이며, 그렇지 않아도 순수 회전이면 `회전`으로 취급한다.
- *
  * @param matrix 검사할 2x2 행렬
  * @returns 활성 프리셋 이름. 없으면 null
  */
 function getActivePresetLabel(matrix: Matrix): string | null {
-  return getMatchingPresetLabel(matrix) ?? (getRotationDegrees(matrix) !== null ? "회전" : null);
+  return getMatchingPresetLabel(matrix);
 }
 
 /**
@@ -344,7 +314,7 @@ function getActivePresetLabel(matrix: Matrix): string | null {
 function formatTransformName(matrix: Matrix, activePresetLabel: string | null): string {
   const rotationDegrees = getRotationDegrees(matrix);
 
-  if (activePresetLabel === "회전" && rotationDegrees !== null) {
+  if (rotationDegrees !== null) {
     return `회전 (${formatDegrees(rotationDegrees)}도)`;
   }
 
@@ -352,24 +322,26 @@ function formatTransformName(matrix: Matrix, activePresetLabel: string | null): 
 }
 
 /**
- * 회전 슬라이더 값을 읽어 도 단위 숫자로 돌려준다.
+ * 현재 회전 각도에 맞는 빠른 각도 버튼을 활성화한다.
  *
- * @param slider 회전 각도 range input
- * @returns 현재 슬라이더 각도
+ * 대표 각도와 정확히 일치하지 않으면 모든 버튼 활성 표시를 제거한다.
+ *
+ * @param controls 회전 컨트롤 관련 요소
+ * @param degrees 현재 회전 각도. 회전이 아니면 null
  */
-function readRotationSliderValue(slider: HTMLInputElement): number {
-  return Number.isNaN(slider.valueAsNumber) ? DEFAULT_ROTATION_DEGREES : slider.valueAsNumber;
-}
+function updateRotationShortcutSelection(
+  controls: RotationControls,
+  degrees: number | null,
+) {
+  const activeAngle = degrees === null ? null : formatDegrees(degrees);
 
-/**
- * 회전 슬라이더와 각도 표시를 같은 값으로 맞춘다.
- *
- * @param controls 회전 슬라이더 관련 요소
- * @param degrees 표시할 회전 각도
- */
-function updateRotationSlider(controls: RotationControls, degrees: number) {
-  controls.slider.value = String(degrees);
-  controls.value.textContent = `${formatDegrees(degrees)}도`;
+  for (const button of controls.shortcutButtons) {
+    const angle = button.dataset.angle;
+    const isActive = angle === activeAngle;
+
+    button.classList.toggle("rotation-shortcut-active", isActive);
+    button.setAttribute("aria-pressed", String(isActive));
+  }
 }
 
 /**
