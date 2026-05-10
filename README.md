@@ -34,7 +34,7 @@ new-demo/
 `index.html` 안에서는 컴파일된 파일을 아래처럼 연결합니다.
 
 ```html
-<script src="/dist/new-demo/main.js"></script>
+<script src="../dist/new-demo/main.js"></script>
 ```
 
 ## 현재 선택
