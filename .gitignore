@@ -14,3 +14,4 @@ npm-debug.log*
 !.env.example
 
 .claude
+docs/
