@@ -1,7 +1,7 @@
-import { CANVAS_ID, matrix, triangle } from "./data.js";
+import { basisVectors, CANVAS_ID, matrix, triangle } from "./data.js";
 import { getCanvasContext, renderScene } from "./canvas.js";
 import { renderExplanation } from "./explain.js";
-import { transformShape } from "./math.js";
+import { transformBasisVectors, transformShape } from "./math.js";
 import type { Matrix } from "./types.js";
 import { setupMatrixControls } from "./ui.js";
 
@@ -29,10 +29,25 @@ function renderCurrentMatrix(
   canvas: HTMLCanvasElement,
   ctx: CanvasRenderingContext2D,
 ) {
+  const transformedBasis = transformBasisVectors(currentMatrix, basisVectors);
   const transformedTriangle = transformShape(triangle, currentMatrix);
 
-  renderScene(canvas, ctx, triangle, transformedTriangle);
-  renderExplanation(currentMatrix, triangle, transformedTriangle);
+  renderScene(
+    canvas,
+    ctx,
+    currentMatrix,
+    triangle,
+    transformedTriangle,
+    basisVectors,
+    transformedBasis,
+  );
+  renderExplanation(
+    currentMatrix,
+    triangle,
+    transformedTriangle,
+    basisVectors,
+    transformedBasis,
+  );
 }
 
 function main() {

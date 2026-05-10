@@ -6,6 +6,11 @@ export const triangle: Vector[] = [
   [1, 0],
 ];
 
+export const basisVectors: Vector[] = [
+  [1, 0],
+  [0, 1],
+];
+
 // 2배 확대 행렬
 export const matrix: Matrix = [
   [2, 0],

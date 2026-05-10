@@ -220,11 +220,7 @@
             margin: 0 auto;
             border: 1px solid var(--line);
             border-radius: 18px;
-            background:
-                linear-gradient(rgba(148, 163, 184, 0.14) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(148, 163, 184, 0.14) 1px, transparent 1px),
-                #fff;
-            background-size: 40px 40px;
+            background: #fff;
             box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
         }
 
@@ -304,6 +300,41 @@
                         <dd id="area-scale-value">4배</dd>
                     </div>
                 </dl>
+                <div class="analysis-card">
+                    <h3>기저벡터 변화</h3>
+                    <p class="explanation-summary">
+                        <code>e1 = [1, 0]</code> 은 원래 x축 기준벡터,
+                        <code>e2 = [0, 1]</code> 은 원래 y축 기준벡터입니다.
+                        <code>A e1</code>, <code>A e2</code> 는 행렬을 적용한 뒤의 새 기준벡터입니다.
+                    </p>
+                    <table class="vertex-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">벡터</th>
+                                <th scope="col">원본</th>
+                                <th scope="col">결과</th>
+                            </tr>
+                        </thead>
+                        <tbody id="basis-results">
+                            <tr>
+                                <th scope="row">e1
+                                    <br>
+                                    <small>원래 x축 기준</small>
+                                </th>
+                                <td>[1, 0]</td>
+                                <td>[2, 0]</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">e2
+                                    <br>
+                                    <small>원래 y축 기준</small>
+                                </th>
+                                <td>[0, 1]</td>
+                                <td>[0, 2]</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
                 <div class="analysis-card">
                     <h3>꼭지점 계산</h3>
                     <table class="vertex-table">

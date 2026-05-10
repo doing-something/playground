@@ -5,6 +5,7 @@ const EPSILON = 1e-9;
 
 type ExplanationElements = {
   areaScale: HTMLElement;
+  basisRows: HTMLTableSectionElement;
   determinant: HTMLElement;
   matrix: HTMLElement;
   summary: HTMLElement;
@@ -17,11 +18,15 @@ type ExplanationElements = {
  * @param matrix 현재 적용 중인 2x2 변환 행렬
  * @param originalShape 원본 도형의 정점 목록
  * @param transformedShape 변환된 도형의 정점 목록
+ * @param originalBasis 원본 기저벡터 목록
+ * @param transformedBasis 변환된 기저벡터 목록
  */
 export function renderExplanation(
   matrix: Matrix,
   originalShape: Vector[],
   transformedShape: Vector[],
+  originalBasis: Vector[],
+  transformedBasis: Vector[],
 ) {
   const elements = getExplanationElements();
   const determinant = determinant2x2(matrix);
@@ -30,7 +35,32 @@ export function renderExplanation(
   elements.determinant.textContent = formatNumber(determinant);
   elements.areaScale.textContent = formatAreaScale(determinant);
   elements.summary.textContent = summarizeTransform(matrix, determinant);
+  elements.basisRows.innerHTML = buildBasisRows(originalBasis, transformedBasis);
   elements.vertexRows.innerHTML = buildVertexRows(matrix, originalShape, transformedShape);
+}
+
+/**
+ * 기저벡터 변화 결과를 표 행 문자열로 만든다.
+ *
+ * @param originalBasis 원본 기저벡터 목록
+ * @param transformedBasis 변환된 기저벡터 목록
+ * @returns tbody 안에 넣을 HTML 문자열
+ */
+function buildBasisRows(originalBasis: Vector[], transformedBasis: Vector[]): string {
+  return originalBasis
+    .map((originalVector, index) => {
+      const transformedVector = transformedBasis[index];
+      const label = `e${index + 1}`;
+
+      return `
+        <tr>
+          <th scope="row">${label}</th>
+          <td>${formatVector(originalVector)}</td>
+          <td>${formatVector(transformedVector)}</td>
+        </tr>
+      `;
+    })
+    .join("");
 }
 
 /**
@@ -202,6 +232,7 @@ function approximatelyEqual(left: number, right: number): boolean {
 function getExplanationElements(): ExplanationElements {
   return {
     areaScale: getRequiredElement("area-scale-value"),
+    basisRows: getRequiredTableSection("basis-results"),
     determinant: getRequiredElement("determinant-value"),
     matrix: getRequiredElement("analysis-matrix"),
     summary: getRequiredElement("transform-summary"),

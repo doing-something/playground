@@ -53,6 +53,23 @@ export function transformShape(shape: Vector[], transform: Matrix): Vector[] {
 }
 
 /**
+ * 표준 기저벡터 e1, e2에 변환 행렬을 적용한다.
+ *
+ * 2차원 행렬은 결국 x축 단위벡터와 y축 단위벡터를 어디로 보내는지로
+ * 해석할 수 있으므로, 학습용 시각화에서 중요한 정보다.
+ *
+ * @param transform 기저벡터에 적용할 2x2 행렬
+ * @param basisVectors 원본 기저벡터 목록
+ * @returns 변환된 기저벡터 목록
+ */
+export function transformBasisVectors(
+  transform: Matrix,
+  basisVectors: Vector[],
+): Vector[] {
+  return basisVectors.map((vector) => multiplyMatrixVector(transform, vector));
+}
+
+/**
  * 2x2 행렬의 determinant(행렬식)를 계산한다.
  *
  * determinant는 면적이 얼마나 커지거나 작아지는지,
