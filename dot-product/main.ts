@@ -1,4 +1,10 @@
-import { basisVectors, CANVAS_ID, matrix, triangle } from "./data.js";
+import {
+  basisVectors,
+  CANVAS_ID,
+  getMatchingPresetLabel,
+  matrix,
+  triangle,
+} from "./data.js";
 import { getCanvasContext, renderScene } from "./canvas.js";
 import { renderExplanation } from "./explain.js";
 import { transformBasisVectors, transformShape } from "./math.js";
@@ -20,11 +26,13 @@ function cloneMatrix(source: Matrix): Matrix {
 /**
  * 현재 행렬 상태를 기준으로 장면을 다시 계산하고 렌더링한다.
  *
+ * @param transformName 현재 행렬에 붙일 학습용 이름
  * @param currentMatrix 원본 삼각형에 적용할 현재 변환 행렬
  * @param canvas 그리기 대상 캔버스
  * @param ctx 2D 렌더링 컨텍스트
  */
 function renderCurrentMatrix(
+  transformName: string,
   currentMatrix: Matrix,
   canvas: HTMLCanvasElement,
   ctx: CanvasRenderingContext2D,
@@ -42,6 +50,7 @@ function renderCurrentMatrix(
     transformedBasis,
   );
   renderExplanation(
+    transformName,
     currentMatrix,
     triangle,
     transformedTriangle,
@@ -53,13 +62,15 @@ function renderCurrentMatrix(
 function main() {
   const { canvas, ctx } = getCanvasContext(CANVAS_ID);
   let currentMatrix = cloneMatrix(matrix);
+  let currentTransformName = getMatchingPresetLabel(currentMatrix) ?? "직접 입력";
 
-  setupMatrixControls(currentMatrix, (nextMatrix) => {
+  setupMatrixControls(currentMatrix, (nextMatrix, nextTransformName) => {
     currentMatrix = cloneMatrix(nextMatrix);
-    renderCurrentMatrix(currentMatrix, canvas, ctx);
+    currentTransformName = nextTransformName;
+    renderCurrentMatrix(currentTransformName, currentMatrix, canvas, ctx);
   });
 
-  renderCurrentMatrix(currentMatrix, canvas, ctx);
+  renderCurrentMatrix(currentTransformName, currentMatrix, canvas, ctx);
 }
 
 main();

@@ -88,6 +88,47 @@
             width: fit-content;
         }
 
+        .preset-group {
+            margin-top: 18px;
+            display: grid;
+            gap: 10px;
+        }
+
+        .preset-group h3 {
+            margin: 0;
+            font-size: 0.95rem;
+            letter-spacing: -0.01em;
+        }
+
+        .preset-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .preset-button {
+            padding: 8px 12px;
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            border-radius: 999px;
+            background: #fff;
+            color: var(--text);
+            font: inherit;
+            cursor: pointer;
+        }
+
+        .preset-button:hover {
+            border-color: rgba(37, 99, 235, 0.45);
+            background: rgba(239, 246, 255, 0.8);
+        }
+
+        .preset-button-active {
+            border-color: rgba(37, 99, 235, 0.5);
+            background: rgba(219, 234, 254, 0.95);
+            color: #1d4ed8;
+            font-weight: 600;
+            box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.1);
+        }
+
         .matrix-row {
             display: grid;
             grid-template-columns: repeat(2, minmax(72px, 88px));
@@ -277,6 +318,10 @@
                         </label>
                     </div>
                 </form>
+                <div class="preset-group" aria-labelledby="preset-group-title">
+                    <h3 id="preset-group-title">프리셋</h3>
+                    <div id="matrix-presets" class="preset-list"></div>
+                </div>
             </section>
             <section class="canvas-panel">
                 <canvas id="triangle-canvas" width="720" height="480"></canvas>
@@ -291,6 +336,10 @@
                     <code id="analysis-matrix">[[2, 0], [0, 2]]</code>
                 </div>
                 <dl class="metric-grid">
+                    <div class="metric-item">
+                        <dt>현재 변환</dt>
+                        <dd id="transform-name-value">균일 확대</dd>
+                    </div>
                     <div class="metric-item">
                         <dt>det(A)</dt>
                         <dd id="determinant-value">4</dd>

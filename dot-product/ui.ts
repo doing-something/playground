@@ -1,6 +1,7 @@
+import { getMatchingPresetLabel, matrixPresets } from "./data.js";
 import type { Matrix } from "./types.js";
 
-type MatrixChangeHandler = (matrix: Matrix) => void;
+type MatrixChangeHandler = (matrix: Matrix, transformName: string) => void;
 
 type MatrixInputMap = {
   a: HTMLInputElement;
@@ -13,7 +14,7 @@ type MatrixInputMap = {
  * 행렬 입력 UI를 초기화하고, 값이 바뀔 때마다 콜백을 호출한다.
  *
  * @param initialMatrix 입력칸에 표시할 초기 2x2 행렬
- * @param onMatrixChange 사용자가 값을 바꿨을 때 호출할 함수
+ * @param onMatrixChange 사용자가 값을 바꿨을 때 호출할 함수. 두 번째 인자는 현재 변환 이름이다.
  */
 export function setupMatrixControls(
   initialMatrix: Matrix,
@@ -21,14 +22,26 @@ export function setupMatrixControls(
 ) {
   const inputs = getMatrixInputs();
   const preview = getMatrixPreview();
+  const presetContainer = getPresetContainer();
+  const presetButtons = new Map<string, HTMLButtonElement>();
 
   writeMatrixToInputs(inputs, initialMatrix);
   updateMatrixPreview(preview, initialMatrix);
+  renderPresetButtons(presetContainer, presetButtons, (presetMatrix, presetLabel) => {
+    writeMatrixToInputs(inputs, presetMatrix);
+    updateMatrixPreview(preview, presetMatrix);
+    updatePresetSelection(presetButtons, presetLabel);
+    onMatrixChange(presetMatrix, presetLabel);
+  });
+  updatePresetSelection(presetButtons, getMatchingPresetLabel(initialMatrix) ?? "직접 입력");
 
   const emitMatrixChange = () => {
     const nextMatrix = readMatrixFromInputs(inputs);
+    const transformName = getMatchingPresetLabel(nextMatrix) ?? "직접 입력";
+
     updateMatrixPreview(preview, nextMatrix);
-    onMatrixChange(nextMatrix);
+    updatePresetSelection(presetButtons, transformName);
+    onMatrixChange(nextMatrix, transformName);
   };
 
   for (const input of Object.values(inputs)) {
@@ -122,6 +135,78 @@ function getMatrixPreview(): HTMLElement {
   }
 
   return preview;
+}
+
+/**
+ * 프리셋 버튼이 들어갈 컨테이너를 DOM에서 찾는다.
+ *
+ * @returns 프리셋 버튼 영역 요소
+ * @throws {Error} 필요한 컨테이너 요소를 찾지 못한 경우
+ */
+function getPresetContainer(): HTMLElement {
+  const container = document.getElementById("matrix-presets");
+  if (!(container instanceof HTMLElement)) {
+    throw new Error("프리셋 컨테이너 요소를 찾을 수 없습니다.");
+  }
+
+  return container;
+}
+
+/**
+ * 대표 행렬을 한 번에 적용할 수 있는 프리셋 버튼들을 만든다.
+ *
+ * @param container 버튼을 렌더링할 부모 요소
+ * @param buttonMap 프리셋 이름과 버튼 요소를 저장할 매핑
+ * @param onPresetSelect 프리셋을 눌렀을 때 호출할 함수
+ */
+function renderPresetButtons(
+  container: HTMLElement,
+  buttonMap: Map<string, HTMLButtonElement>,
+  onPresetSelect: (matrix: Matrix, label: string) => void,
+) {
+  container.replaceChildren();
+  buttonMap.clear();
+
+  for (const preset of matrixPresets) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "preset-button";
+    button.textContent = preset.label;
+    button.addEventListener("click", () => {
+      onPresetSelect(cloneMatrix(preset.matrix), preset.label);
+    });
+    buttonMap.set(preset.label, button);
+    container.appendChild(button);
+  }
+}
+
+/**
+ * 현재 선택 상태에 맞춰 프리셋 버튼의 활성 스타일을 갱신한다.
+ *
+ * 프리셋과 일치하지 않는 직접 입력 상태라면 모든 버튼의 활성 표시를 제거한다.
+ *
+ * @param buttonMap 프리셋 이름과 버튼 요소 매핑
+ * @param transformName 현재 변환 이름
+ */
+function updatePresetSelection(
+  buttonMap: Map<string, HTMLButtonElement>,
+  transformName: string,
+) {
+  for (const [label, button] of buttonMap) {
+    const isActive = label === transformName;
+    button.classList.toggle("preset-button-active", isActive);
+    button.setAttribute("aria-pressed", String(isActive));
+  }
+}
+
+/**
+ * 행렬 값을 독립적인 새 배열로 복사한다.
+ *
+ * @param matrix 복사할 2x2 행렬
+ * @returns 같은 값을 가진 새 행렬
+ */
+function cloneMatrix(matrix: Matrix): Matrix {
+  return matrix.map((row) => [...row]);
 }
 
 /**

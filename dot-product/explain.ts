@@ -9,12 +9,14 @@ type ExplanationElements = {
   determinant: HTMLElement;
   matrix: HTMLElement;
   summary: HTMLElement;
+  transformName: HTMLElement;
   vertexRows: HTMLTableSectionElement;
 };
 
 /**
  * 현재 행렬과 정점 계산 결과를 설명 패널에 렌더링한다.
  *
+ * @param transformName 현재 행렬에 붙일 학습용 이름
  * @param matrix 현재 적용 중인 2x2 변환 행렬
  * @param originalShape 원본 도형의 정점 목록
  * @param transformedShape 변환된 도형의 정점 목록
@@ -22,6 +24,7 @@ type ExplanationElements = {
  * @param transformedBasis 변환된 기저벡터 목록
  */
 export function renderExplanation(
+  transformName: string,
   matrix: Matrix,
   originalShape: Vector[],
   transformedShape: Vector[],
@@ -31,6 +34,7 @@ export function renderExplanation(
   const elements = getExplanationElements();
   const determinant = determinant2x2(matrix);
 
+  elements.transformName.textContent = transformName;
   elements.matrix.textContent = formatMatrix(matrix);
   elements.determinant.textContent = formatNumber(determinant);
   elements.areaScale.textContent = formatAreaScale(determinant);
@@ -236,6 +240,7 @@ function getExplanationElements(): ExplanationElements {
     determinant: getRequiredElement("determinant-value"),
     matrix: getRequiredElement("analysis-matrix"),
     summary: getRequiredElement("transform-summary"),
+    transformName: getRequiredElement("transform-name-value"),
     vertexRows: getRequiredTableSection("vertex-results"),
   };
 }
