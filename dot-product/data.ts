@@ -1,3 +1,4 @@
+import { createRotationMatrix } from "./math.js";
 import type { Matrix, Vector } from "./types.js";
 
 export type MatrixPreset = {
@@ -23,6 +24,7 @@ export const matrix: Matrix = [
 ];
 
 export const CANVAS_ID = "triangle-canvas";
+export const DEFAULT_ROTATION_DEGREES = 30;
 
 export const matrixPresets: MatrixPreset[] = [
   { label: "단위행렬", matrix: [[1, 0], [0, 1]] },
@@ -31,7 +33,7 @@ export const matrixPresets: MatrixPreset[] = [
   { label: "y축 확대", matrix: [[1, 0], [0, 2]] },
   { label: "shear", matrix: [[1, 1], [0, 1]] },
   { label: "반사", matrix: [[-1, 0], [0, 1]] },
-  { label: "90도 회전", matrix: [[0, -1], [1, 0]] },
+  { label: "회전", matrix: createRotationMatrix(DEFAULT_ROTATION_DEGREES) },
 ];
 
 /**

@@ -1,4 +1,9 @@
-import { getMatchingPresetLabel, matrixPresets } from "./data.js";
+import {
+  DEFAULT_ROTATION_DEGREES,
+  getMatchingPresetLabel,
+  matrixPresets,
+} from "./data.js";
+import { createRotationMatrix, getRotationDegrees } from "./math.js";
 import type { Matrix } from "./types.js";
 
 type MatrixChangeHandler = (matrix: Matrix, transformName: string) => void;
@@ -8,6 +13,12 @@ type MatrixInputMap = {
   b: HTMLInputElement;
   c: HTMLInputElement;
   d: HTMLInputElement;
+};
+
+type RotationControls = {
+  resetButton: HTMLButtonElement;
+  slider: HTMLInputElement;
+  value: HTMLElement;
 };
 
 /**
@@ -24,29 +35,74 @@ export function setupMatrixControls(
   const preview = getMatrixPreview();
   const presetContainer = getPresetContainer();
   const presetButtons = new Map<string, HTMLButtonElement>();
+  const rotationControls = getRotationControls();
+  const initialActivePreset = getActivePresetLabel(initialMatrix);
+  const initialRotationDegrees = getRotationDegrees(initialMatrix);
 
   writeMatrixToInputs(inputs, initialMatrix);
-  updateMatrixPreview(preview, initialMatrix);
+  updateRotationSlider(rotationControls, DEFAULT_ROTATION_DEGREES);
   renderPresetButtons(presetContainer, presetButtons, (presetMatrix, presetLabel) => {
-    writeMatrixToInputs(inputs, presetMatrix);
-    updateMatrixPreview(preview, presetMatrix);
-    updatePresetSelection(presetButtons, presetLabel);
-    onMatrixChange(presetMatrix, presetLabel);
+    const nextMatrix = presetLabel === "회전"
+      ? createRotationMatrix(readRotationSliderValue(rotationControls.slider))
+      : presetMatrix;
+
+    writeMatrixToInputs(inputs, nextMatrix);
+    applyMatrixChange(
+      nextMatrix,
+      presetLabel,
+      preview,
+      presetButtons,
+      rotationControls,
+      onMatrixChange,
+    );
   });
-  updatePresetSelection(presetButtons, getMatchingPresetLabel(initialMatrix) ?? "직접 입력");
+  updateMatrixPreview(preview, initialMatrix);
+  updatePresetSelection(presetButtons, initialActivePreset);
+  if (initialRotationDegrees !== null) {
+    updateRotationSlider(rotationControls, initialRotationDegrees);
+  }
 
   const emitMatrixChange = () => {
     const nextMatrix = readMatrixFromInputs(inputs);
-    const transformName = getMatchingPresetLabel(nextMatrix) ?? "직접 입력";
-
-    updateMatrixPreview(preview, nextMatrix);
-    updatePresetSelection(presetButtons, transformName);
-    onMatrixChange(nextMatrix, transformName);
+    applyMatrixChange(
+      nextMatrix,
+      getActivePresetLabel(nextMatrix),
+      preview,
+      presetButtons,
+      rotationControls,
+      onMatrixChange,
+    );
   };
 
   for (const input of Object.values(inputs)) {
     input.addEventListener("input", emitMatrixChange);
   }
+
+  rotationControls.slider.addEventListener("input", () => {
+    const nextMatrix = createRotationMatrix(readRotationSliderValue(rotationControls.slider));
+    writeMatrixToInputs(inputs, nextMatrix);
+    applyMatrixChange(
+      nextMatrix,
+      "회전",
+      preview,
+      presetButtons,
+      rotationControls,
+      onMatrixChange,
+    );
+  });
+
+  rotationControls.resetButton.addEventListener("click", () => {
+    const nextMatrix = createRotationMatrix(0);
+    writeMatrixToInputs(inputs, nextMatrix);
+    applyMatrixChange(
+      nextMatrix,
+      getActivePresetLabel(nextMatrix),
+      preview,
+      presetButtons,
+      rotationControls,
+      onMatrixChange,
+    );
+  });
 }
 
 /**
@@ -56,7 +112,7 @@ export function setupMatrixControls(
  * @returns 코드 블록에 넣을 행렬 문자열
  */
 function formatMatrix(matrix: Matrix): string {
-  return `[[${matrix[0][0]}, ${matrix[0][1]}], [${matrix[1][0]}, ${matrix[1][1]}]]`;
+  return `[[${matrix[0].map(formatNumber).join(", ")}], [${matrix[1].map(formatNumber).join(", ")}]]`;
 }
 
 /**
@@ -67,6 +123,47 @@ function formatMatrix(matrix: Matrix): string {
  */
 function updateMatrixPreview(preview: HTMLElement, matrix: Matrix) {
   preview.textContent = formatMatrix(matrix);
+}
+
+/**
+ * 숫자를 짧고 읽기 쉬운 문자열로 바꾼다.
+ *
+ * @param value 표시할 숫자
+ * @returns 정수는 그대로, 소수는 넷째 자리까지 정리한 문자열
+ */
+function formatNumber(value: number): string {
+  return Number.isInteger(value)
+    ? String(value)
+    : value.toFixed(4).replace(/\.?0+$/, "");
+}
+
+/**
+ * 프리셋 상태, 회전 슬라이더, 미리보기를 한 번에 갱신하고 콜백을 호출한다.
+ *
+ * @param matrix 현재 반영할 행렬
+ * @param activePresetLabel 활성 프리셋 이름. 프리셋이 없으면 null
+ * @param preview 행렬 미리보기 요소
+ * @param presetButtons 프리셋 버튼 매핑
+ * @param rotationControls 회전 슬라이더와 각도 표시 요소
+ * @param onMatrixChange 상태 변경 콜백
+ */
+function applyMatrixChange(
+  matrix: Matrix,
+  activePresetLabel: string | null,
+  preview: HTMLElement,
+  presetButtons: Map<string, HTMLButtonElement>,
+  rotationControls: RotationControls,
+  onMatrixChange: MatrixChangeHandler,
+) {
+  const transformName = formatTransformName(matrix, activePresetLabel);
+  const rotationDegrees = getRotationDegrees(matrix);
+
+  updateMatrixPreview(preview, matrix);
+  updatePresetSelection(presetButtons, activePresetLabel);
+  if (rotationDegrees !== null) {
+    updateRotationSlider(rotationControls, rotationDegrees);
+  }
+  onMatrixChange(matrix, transformName);
 }
 
 /**
@@ -153,6 +250,32 @@ function getPresetContainer(): HTMLElement {
 }
 
 /**
+ * 회전 각도 슬라이더와 각도 표시 요소를 DOM에서 찾는다.
+ *
+ * @returns 회전 슬라이더 관련 요소 묶음
+ * @throws {Error} 필요한 회전 컨트롤 요소를 찾지 못한 경우
+ */
+function getRotationControls(): RotationControls {
+  const resetButton = document.getElementById("rotation-reset");
+  const slider = document.getElementById("rotation-angle");
+  const value = document.getElementById("rotation-angle-value");
+
+  if (!(resetButton instanceof HTMLButtonElement)) {
+    throw new Error("회전 초기화 버튼을 찾을 수 없습니다.");
+  }
+
+  if (!(slider instanceof HTMLInputElement)) {
+    throw new Error("회전 각도 슬라이더를 찾을 수 없습니다.");
+  }
+
+  if (!(value instanceof HTMLElement)) {
+    throw new Error("회전 각도 표시 요소를 찾을 수 없습니다.");
+  }
+
+  return { resetButton, slider, value };
+}
+
+/**
  * 대표 행렬을 한 번에 적용할 수 있는 프리셋 버튼들을 만든다.
  *
  * @param container 버튼을 렌더링할 부모 요소
@@ -190,13 +313,75 @@ function renderPresetButtons(
  */
 function updatePresetSelection(
   buttonMap: Map<string, HTMLButtonElement>,
-  transformName: string,
+  activePresetLabel: string | null,
 ) {
   for (const [label, button] of buttonMap) {
-    const isActive = label === transformName;
+    const isActive = label === activePresetLabel;
     button.classList.toggle("preset-button-active", isActive);
     button.setAttribute("aria-pressed", String(isActive));
   }
+}
+
+/**
+ * 현재 행렬이 어떤 프리셋에 해당하는지 판단한다.
+ *
+ * 정확히 일치하는 프리셋이 우선이며, 그렇지 않아도 순수 회전이면 `회전`으로 취급한다.
+ *
+ * @param matrix 검사할 2x2 행렬
+ * @returns 활성 프리셋 이름. 없으면 null
+ */
+function getActivePresetLabel(matrix: Matrix): string | null {
+  return getMatchingPresetLabel(matrix) ?? (getRotationDegrees(matrix) !== null ? "회전" : null);
+}
+
+/**
+ * 설명 패널에 보여줄 현재 변환 이름을 만든다.
+ *
+ * @param matrix 현재 2x2 행렬
+ * @param activePresetLabel 활성 프리셋 이름
+ * @returns 사용자가 읽을 변환 이름
+ */
+function formatTransformName(matrix: Matrix, activePresetLabel: string | null): string {
+  const rotationDegrees = getRotationDegrees(matrix);
+
+  if (activePresetLabel === "회전" && rotationDegrees !== null) {
+    return `회전 (${formatDegrees(rotationDegrees)}도)`;
+  }
+
+  return activePresetLabel ?? "직접 입력";
+}
+
+/**
+ * 회전 슬라이더 값을 읽어 도 단위 숫자로 돌려준다.
+ *
+ * @param slider 회전 각도 range input
+ * @returns 현재 슬라이더 각도
+ */
+function readRotationSliderValue(slider: HTMLInputElement): number {
+  return Number.isNaN(slider.valueAsNumber) ? DEFAULT_ROTATION_DEGREES : slider.valueAsNumber;
+}
+
+/**
+ * 회전 슬라이더와 각도 표시를 같은 값으로 맞춘다.
+ *
+ * @param controls 회전 슬라이더 관련 요소
+ * @param degrees 표시할 회전 각도
+ */
+function updateRotationSlider(controls: RotationControls, degrees: number) {
+  controls.slider.value = String(degrees);
+  controls.value.textContent = `${formatDegrees(degrees)}도`;
+}
+
+/**
+ * 각도를 화면 표시용 문자열로 정리한다.
+ *
+ * @param degrees 표시할 각도
+ * @returns 정수면 정수로, 아니면 소수 첫째 자리까지 남긴 문자열
+ */
+function formatDegrees(degrees: number): string {
+  return Number.isInteger(degrees)
+    ? String(degrees)
+    : degrees.toFixed(1).replace(/\.?0+$/, "");
 }
 
 /**

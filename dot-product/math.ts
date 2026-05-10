@@ -1,5 +1,7 @@
 import type { Matrix, Vector } from "./types.js";
 
+const EPSILON = 1e-4;
+
 /**
  * 두 벡터의 내적(dot product)을 계산한다.
  * 내적은 두 벡터가 "얼마나 같은 방향을 향하는가"를 나타내는 스칼라 값이다.
@@ -86,4 +88,102 @@ export function determinant2x2(matrix: Matrix): number {
 
   const [[a, b], [c, d]] = matrix;
   return a * d - b * c;
+}
+
+/**
+ * 주어진 각도(도 단위)에 해당하는 2차원 회전 행렬을 만든다.
+ *
+ * @param degrees 반시계 방향 회전 각도(도)
+ * @returns 2x2 회전 행렬
+ */
+export function createRotationMatrix(degrees: number): Matrix {
+  const radians = (degrees * Math.PI) / 180;
+  const cosine = roundMatrixValue(Math.cos(radians));
+  const sine = roundMatrixValue(Math.sin(radians));
+
+  return [
+    [cosine, -sine],
+    [sine, cosine],
+  ];
+}
+
+/**
+ * 2x2 행렬이 순수 회전 행렬이면 그 각도를 도 단위로 돌려준다.
+ *
+ * @param matrix 검사할 2x2 행렬
+ * @returns 회전 각도(도). 순수 회전이 아니면 null
+ */
+export function getRotationDegrees(matrix: Matrix): number | null {
+  if (matrix.length !== 2 || matrix.some((row) => row.length !== 2)) {
+    return null;
+  }
+
+  const [[a, b], [c, d]] = matrix;
+  const angle = (Math.atan2(c, a) * 180) / Math.PI;
+  const normalizedAngle = normalizeDegrees(angle);
+  const expectedMatrix = createRotationMatrix(normalizedAngle);
+
+  if (!approximatelyEqual(determinant2x2(matrix), 1)) {
+    return null;
+  }
+
+  return isSameMatrix(matrix, expectedMatrix) ? normalizedAngle : null;
+}
+
+/**
+ * 두 행렬이 오차 범위 안에서 같은지 비교한다.
+ *
+ * @param left 첫 번째 2x2 행렬
+ * @param right 두 번째 2x2 행렬
+ * @returns 네 원소가 모두 거의 같으면 true
+ */
+function isSameMatrix(left: Matrix, right: Matrix): boolean {
+  return left.every((row, rowIndex) =>
+    row.every((value, columnIndex) =>
+      approximatelyEqual(value, right[rowIndex][columnIndex]),
+    ),
+  );
+}
+
+/**
+ * 부동소수점 오차 때문에 생긴 아주 작은 값을 0으로 정리한다.
+ *
+ * @param value 정리할 숫자
+ * @returns 0에 충분히 가까우면 0, 아니면 원래 값
+ */
+function normalizeNearZero(value: number): number {
+  return approximatelyEqual(value, 0) ? 0 : value;
+}
+
+/**
+ * 행렬 원소를 보기 쉬운 소수 자리수로 정리한다.
+ *
+ * @param value 정리할 숫자
+ * @returns 0 근처 오차를 제거하고 소수 넷째 자리까지 반올림한 값
+ */
+function roundMatrixValue(value: number): number {
+  const rounded = Math.round(value * 10_000) / 10_000;
+  return normalizeNearZero(rounded);
+}
+
+/**
+ * 각도를 -180도 초과 180도 이하 범위로 정규화한다.
+ *
+ * @param value 정규화할 각도
+ * @returns 보기 쉬운 범위로 정리된 각도
+ */
+function normalizeDegrees(value: number): number {
+  const normalized = ((value + 180) % 360 + 360) % 360 - 180;
+  return approximatelyEqual(normalized, -180) ? 180 : normalizeNearZero(normalized);
+}
+
+/**
+ * 두 숫자가 오차 범위 안에서 같은지 비교한다.
+ *
+ * @param left 첫 번째 숫자
+ * @param right 두 번째 숫자
+ * @returns 충분히 같으면 true
+ */
+function approximatelyEqual(left: number, right: number): boolean {
+  return Math.abs(left - right) < EPSILON;
 }

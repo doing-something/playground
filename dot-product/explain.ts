@@ -1,4 +1,4 @@
-import { determinant2x2 } from "./math.js";
+import { determinant2x2, getRotationDegrees } from "./math.js";
 import type { Matrix, Vector } from "./types.js";
 
 const EPSILON = 1e-9;
@@ -38,7 +38,7 @@ export function renderExplanation(
   elements.matrix.textContent = formatMatrix(matrix);
   elements.determinant.textContent = formatNumber(determinant);
   elements.areaScale.textContent = formatAreaScale(determinant);
-  elements.summary.textContent = summarizeTransform(matrix, determinant);
+  elements.summary.textContent = summarizeTransform(transformName, matrix, determinant);
   elements.basisRows.innerHTML = buildBasisRows(originalBasis, transformedBasis);
   elements.vertexRows.innerHTML = buildVertexRows(matrix, originalShape, transformedShape);
 }
@@ -103,8 +103,17 @@ function buildVertexRows(
  * @param determinant 행렬식 값
  * @returns 학습용 요약 문장
  */
-function summarizeTransform(matrix: Matrix, determinant: number): string {
+function summarizeTransform(
+  transformName: string,
+  matrix: Matrix,
+  determinant: number,
+): string {
   const [[a, b], [c, d]] = matrix;
+  const rotationDegrees = getRotationDegrees(matrix);
+
+  if (transformName.startsWith("회전") && rotationDegrees !== null) {
+    return formatRotationSummary(rotationDegrees);
+  }
 
   if (approximatelyEqual(determinant, 0)) {
     return "이 행렬은 도형을 한 직선 방향으로 눌러 면적을 0으로 만듭니다.";
@@ -127,6 +136,21 @@ function summarizeTransform(matrix: Matrix, determinant: number): string {
   }
 
   return `회전 또는 기울이기 성분이 포함된 일반적인 선형변환입니다. 면적은 ${formatAreaScale(determinant)}로 바뀝니다.`;
+}
+
+/**
+ * 회전 각도에 맞는 설명 문장을 만든다.
+ *
+ * @param degrees 회전 각도(도)
+ * @returns 회전 방향과 성질을 설명하는 문장
+ */
+function formatRotationSummary(degrees: number): string {
+  if (approximatelyEqual(degrees, 0)) {
+    return "원점을 기준으로 0도 회전한 상태라서, 결과적으로 단위행렬과 같은 변화가 없습니다.";
+  }
+
+  const direction = degrees > 0 ? "반시계" : "시계";
+  return `원점을 기준으로 ${direction} 방향으로 ${formatNumber(Math.abs(degrees))}도 회전합니다. 길이와 면적은 유지됩니다.`;
 }
 
 /**
