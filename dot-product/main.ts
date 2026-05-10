@@ -7,9 +7,10 @@ import {
 } from "./data.js";
 import { getCanvasContext, renderScene } from "./canvas.js";
 import { renderExplanation } from "./explain.js";
-import { transformBasisVectors, transformShape } from "./math.js";
+import { getRotationDegrees, transformBasisVectors, transformShape } from "./math.js";
 import type { Matrix } from "./types.js";
 import { setupMatrixControls } from "./ui.js";
+import { readMatrixFromQuery, writeMatrixToQuery } from "./url-state.js";
 
 /**
  * 2차원 행렬을 값까지 복사한 새 배열로 만든다.
@@ -59,14 +60,45 @@ function renderCurrentMatrix(
   );
 }
 
+/**
+ * 현재 행렬에 맞는 설명용 변환 이름을 만든다.
+ *
+ * 회전 행렬이면 각도를 포함해 보여주고, 아니면 프리셋 이름이나 직접 입력 상태를 쓴다.
+ *
+ * @param currentMatrix 현재 2x2 행렬
+ * @returns 설명 패널에 보여줄 변환 이름
+ */
+function getTransformName(currentMatrix: Matrix): string {
+  const rotationDegrees = getRotationDegrees(currentMatrix);
+
+  if (rotationDegrees !== null) {
+    return `회전 (${formatDegrees(rotationDegrees)}도)`;
+  }
+
+  return getMatchingPresetLabel(currentMatrix) ?? "직접 입력";
+}
+
+/**
+ * 각도를 화면 표시용 문자열로 정리한다.
+ *
+ * @param degrees 표시할 각도
+ * @returns 정수면 정수로, 아니면 소수 첫째 자리까지 남긴 문자열
+ */
+function formatDegrees(degrees: number): string {
+  return Number.isInteger(degrees)
+    ? String(degrees)
+    : degrees.toFixed(1).replace(/\.?0+$/, "");
+}
+
 function main() {
   const { canvas, ctx } = getCanvasContext(CANVAS_ID);
-  let currentMatrix = cloneMatrix(matrix);
-  let currentTransformName = getMatchingPresetLabel(currentMatrix) ?? "직접 입력";
+  let currentMatrix = readMatrixFromQuery(matrix);
+  let currentTransformName = getTransformName(currentMatrix);
 
   setupMatrixControls(currentMatrix, (nextMatrix, nextTransformName) => {
     currentMatrix = cloneMatrix(nextMatrix);
     currentTransformName = nextTransformName;
+    writeMatrixToQuery(currentMatrix, matrix);
     renderCurrentMatrix(currentTransformName, currentMatrix, canvas, ctx);
   });
 

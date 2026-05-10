@@ -36,7 +36,8 @@ function resolveFilePath(urlPath) {
 
 function startServer() {
   const server = createServer((request, response) => {
-    const filePath = resolveFilePath(request.url ?? "/");
+    const requestUrl = new URL(request.url ?? "/", `http://${host}:${port}`);
+    const filePath = resolveFilePath(requestUrl.pathname);
 
     if (!filePath || !existsSync(filePath)) {
       response.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
