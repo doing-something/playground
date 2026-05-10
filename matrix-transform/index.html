@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Matrix Transform Demo</title>
+    <title>삼각형으로 보는 2x2 행렬 변환</title>
     <style>
         :root {
             color-scheme: light;
@@ -337,10 +337,10 @@
 </head>
 <body>
     <main>
-        <h1>삼각형 행렬 변환</h1>
+        <h1>삼각형으로 보는 2x2 행렬 변환</h1>
         <p>
-            아래 행렬 값을 바꾸면 캔버스가 바로 다시 그려집니다.
-            현재 행렬은 <code id="matrix-preview">[[2, 0], [0, 2]]</code> 입니다.
+            행렬 값을 바꾸거나 회전 각도를 선택해, 도형과 좌표계가 어떻게 변하는지 비교해보세요.
+            현재 행렬: <code id="matrix-preview">[[2, 0], [0, 2]]</code>
         </p>
         <div class="layout">
             <section class="control-panel" aria-labelledby="matrix-controls-title">
@@ -474,6 +474,6 @@
             </section>
         </div>
     </main>
-    <script type="module" src="/dist/dot-product/main.js"></script>
+    <script type="module" src="/dist/matrix-transform/main.js"></script>
 </body>
 </html>

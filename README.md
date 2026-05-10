@@ -1,6 +1,6 @@
 # Playground demos
 
-이 저장소는 여러 개의 데모 예시를 모아두는 용도입니다. 현재 첫 번째 예시는 `dot-product`입니다.
+이 저장소는 여러 개의 데모 예시를 모아두는 용도입니다. 현재 첫 번째 예시는 `matrix-transform`입니다.
 
 ## 시작
 
@@ -9,7 +9,7 @@ npm install
 npm run dev
 ```
 
-브라우저에서 `http://127.0.0.1:4173/dot-product/`를 열면 됩니다.
+브라우저에서 `http://127.0.0.1:4173/matrix-transform/`를 열면 됩니다.
 
 ## 스크립트
 

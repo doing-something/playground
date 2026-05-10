@@ -59,7 +59,7 @@ function startServer() {
 
   server.listen(port, host, () => {
     console.log(`Static server: http://${host}:${port}`);
-    console.log(`Dot product demo: http://${host}:${port}/dot-product/`);
+    console.log(`Matrix transform demo: http://${host}:${port}/matrix-transform/`);
   });
 
   return server;
