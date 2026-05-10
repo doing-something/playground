@@ -121,6 +121,98 @@
             gap: 14px;
         }
 
+        .explanation-panel {
+            display: grid;
+            gap: 18px;
+            padding: 20px;
+            border: 1px solid rgba(148, 163, 184, 0.24);
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.72);
+        }
+
+        .explanation-panel h2,
+        .explanation-panel h3 {
+            margin: 0;
+            letter-spacing: -0.02em;
+        }
+
+        .explanation-panel h2 {
+            font-size: 1.1rem;
+        }
+
+        .explanation-panel h3 {
+            font-size: 0.98rem;
+        }
+
+        .explanation-summary {
+            margin: 0;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--muted);
+        }
+
+        .analysis-card {
+            padding: 14px 16px;
+            border-radius: 14px;
+            background: rgba(241, 245, 249, 0.72);
+            border: 1px solid rgba(148, 163, 184, 0.18);
+        }
+
+        .analysis-card code {
+            display: inline-block;
+            margin-top: 8px;
+            border-radius: 12px;
+            padding: 8px 10px;
+        }
+
+        .metric-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .metric-item {
+            padding: 14px 16px;
+            border-radius: 14px;
+            background: rgba(241, 245, 249, 0.72);
+            border: 1px solid rgba(148, 163, 184, 0.18);
+        }
+
+        .metric-item dt {
+            margin: 0 0 6px;
+            color: var(--muted);
+            font-size: 0.86rem;
+        }
+
+        .metric-item dd {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .vertex-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .vertex-table th,
+        .vertex-table td {
+            padding: 10px 8px;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+            vertical-align: top;
+            text-align: left;
+        }
+
+        .vertex-table thead th {
+            color: var(--muted);
+            font-size: 0.82rem;
+            font-weight: 600;
+        }
+
+        .vertex-table tbody th {
+            font-weight: 600;
+        }
+
         canvas {
             display: block;
             width: 100%;
@@ -139,6 +231,16 @@
         @media (min-width: 900px) {
             .layout {
                 grid-template-columns: 240px minmax(0, 1fr);
+            }
+        }
+
+        @media (min-width: 1200px) {
+            main {
+                width: min(1280px, calc(100% - 32px));
+            }
+
+            .layout {
+                grid-template-columns: 240px minmax(0, 1fr) 300px;
             }
         }
     </style>
@@ -182,6 +284,47 @@
             </section>
             <section class="canvas-panel">
                 <canvas id="triangle-canvas" width="720" height="480"></canvas>
+            </section>
+            <section class="explanation-panel" aria-labelledby="matrix-analysis-title">
+                <h2 id="matrix-analysis-title">계산 설명</h2>
+                <p id="transform-summary" class="explanation-summary">
+                    2배의 균일한 확대/축소가 일어나며, 면적은 4배로 바뀝니다.
+                </p>
+                <div class="analysis-card">
+                    <h3>현재 행렬</h3>
+                    <code id="analysis-matrix">[[2, 0], [0, 2]]</code>
+                </div>
+                <dl class="metric-grid">
+                    <div class="metric-item">
+                        <dt>det(A)</dt>
+                        <dd id="determinant-value">4</dd>
+                    </div>
+                    <div class="metric-item">
+                        <dt>면적 배율</dt>
+                        <dd id="area-scale-value">4배</dd>
+                    </div>
+                </dl>
+                <div class="analysis-card">
+                    <h3>꼭지점 계산</h3>
+                    <table class="vertex-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">정점</th>
+                                <th scope="col">원본</th>
+                                <th scope="col">계산</th>
+                                <th scope="col">결과</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vertex-results">
+                            <tr>
+                                <th scope="row">A</th>
+                                <td>[0, 2]</td>
+                                <td>[2×0 + 0×2, 0×0 + 2×2]</td>
+                                <td>[0, 4]</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </section>
         </div>
     </main>

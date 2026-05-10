@@ -51,3 +51,22 @@ export function multiplyMatrixVector(matrix: Matrix, vector: Vector) {
 export function transformShape(shape: Vector[], transform: Matrix): Vector[] {
   return shape.map((vertex) => multiplyMatrixVector(transform, vertex));
 }
+
+/**
+ * 2x2 행렬의 determinant(행렬식)를 계산한다.
+ *
+ * determinant는 면적이 얼마나 커지거나 작아지는지,
+ * 그리고 방향이 뒤집히는지 판단할 때 사용한다.
+ *
+ * @param matrix determinant를 계산할 2x2 행렬
+ * @returns 행렬식 값
+ * @throws {Error} 2x2 행렬이 아닌 경우
+ */
+export function determinant2x2(matrix: Matrix): number {
+  if (matrix.length !== 2 || matrix.some((row) => row.length !== 2)) {
+    throw new Error("determinant2x2는 2x2 행렬만 계산할 수 있습니다.");
+  }
+
+  const [[a, b], [c, d]] = matrix;
+  return a * d - b * c;
+}
