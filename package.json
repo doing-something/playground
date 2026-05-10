@@ -1,0 +1,19 @@
+{
+  "name": "playground-demos",
+  "private": true,
+  "description": "TypeScript-based math and graphics demo playground",
+  "packageManager": "npm@11.8.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc --pretty",
+    "watch": "tsc --watch --preserveWatchOutput",
+    "serve": "node ./scripts/dev.mjs --serve-only",
+    "dev": "node ./scripts/dev.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  }
+}
