@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Playground Demos</title>
-  <meta http-equiv="refresh" content="0; url=./matrix-transform/">
   <style>
     :root {
       color-scheme: light;
@@ -33,37 +32,88 @@
     }
 
     main {
-      width: min(560px, 100%);
-      padding: 28px;
+      width: min(640px, 100%);
+      padding: 32px;
       border: 1px solid var(--line);
       border-radius: 20px;
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.92);
       box-shadow: 0 24px 70px rgba(15, 23, 42, 0.08);
-      text-align: center;
     }
 
     h1 {
-      margin: 0 0 12px;
+      margin: 0 0 8px;
       font-size: clamp(1.8rem, 5vw, 2.4rem);
       letter-spacing: -0.04em;
     }
 
-    p {
-      margin: 0;
-      line-height: 1.6;
+    .intro {
+      margin: 0 0 24px;
       color: var(--muted);
+      line-height: 1.6;
     }
 
-    a {
-      color: #1d4ed8;
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 12px;
+    }
+
+    li a {
+      display: grid;
+      gap: 4px;
+      padding: 16px 18px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fff;
+      color: var(--text);
+      text-decoration: none;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    li a:hover {
+      border-color: rgba(37, 99, 235, 0.45);
+      background: rgba(239, 246, 255, 0.7);
+    }
+
+    .demo-title {
+      font-size: 1.05rem;
       font-weight: 600;
+      color: #1d4ed8;
+    }
+
+    .demo-description {
+      font-size: 0.92rem;
+      color: var(--muted);
+      line-height: 1.5;
     }
   </style>
 </head>
 <body>
   <main>
     <h1>Playground Demos</h1>
-    <p><a href="./matrix-transform/">matrix-transform 데모로 이동</a></p>
+    <p class="intro">선형대수와 텐서 개념을 손으로 만져 보는 작은 데모 모음.</p>
+    <ul>
+      <li>
+        <a href="./matrix-transform/">
+          <span class="demo-title">matrix-transform</span>
+          <span class="demo-description">
+            2x2 행렬 하나로 삼각형이 어떻게 변하는지 확인합니다.
+            회전·확대·shear·반사를 직접 조정하며 직관을 잡습니다.
+          </span>
+        </a>
+      </li>
+      <li>
+        <a href="./matrix-transpose/">
+          <span class="demo-title">matrix-transpose</span>
+          <span class="demo-description">
+            같은 단위 정사각형에 A와 Aᵀ를 적용해 한 화면에서 비교합니다.
+            대칭·회전·shear의 전치가 시각적으로 무엇인지 확인합니다.
+          </span>
+        </a>
+      </li>
+    </ul>
   </main>
 </body>
 </html>
