@@ -55,6 +55,32 @@ export function transformShape(shape: Vector[], transform: Matrix): Vector[] {
 }
 
 /**
+ * 행렬의 전치(transpose)를 만든다.
+ *
+ * 전치는 i번째 행을 i번째 열로 바꾸는 연산이다.
+ * 2x2 행렬 [[a,b],[c,d]]의 전치는 [[a,c],[b,d]]가 된다.
+ *
+ * @param matrix 전치할 행렬
+ * @returns 행과 열을 뒤바꾼 새 행렬
+ * @throws {Error} 행렬이 비어 있는 경우
+ * @throws {Error} 행렬의 각 행 길이가 서로 다른 경우
+ */
+export function transpose(matrix: Matrix): Matrix {
+  if (matrix.length === 0) {
+    throw new Error("행렬이 비어 있습니다.");
+  }
+
+  const columnCount = matrix[0].length;
+  if (!matrix.every((row) => row.length === columnCount)) {
+    throw new Error("행렬의 각 행 길이가 일치하지 않습니다.");
+  }
+
+  return Array.from({ length: columnCount }, (_, columnIndex) =>
+    matrix.map((row) => row[columnIndex]),
+  );
+}
+
+/**
  * 표준 기저벡터 e1, e2에 변환 행렬을 적용한다.
  *
  * 2차원 행렬은 결국 x축 단위벡터와 y축 단위벡터를 어디로 보내는지로
