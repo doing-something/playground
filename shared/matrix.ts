@@ -55,6 +55,28 @@ export function transformShape(shape: Vector[], transform: Matrix): Vector[] {
 }
 
 /**
+ * 행렬 값을 독립적인 새 배열로 깊은 복사한다.
+ *
+ * 입력 행렬이 외부에서 수정되어도 복사본은 영향받지 않는다.
+ */
+export function cloneMatrix(source: Matrix): Matrix {
+  return source.map((row) => [...row]);
+}
+
+/**
+ * 두 행렬이 정확히 같은 값을 가지는지(===) 비교한다.
+ *
+ * 부동소수점 오차를 허용하지 않으므로 정수 행렬이나
+ * 같은 입력에서 만들어진 결과끼리 비교할 때 쓴다.
+ * 부동소수점 오차를 허용해야 한다면 isApproximatelyEqualMatrix를 쓰자.
+ */
+export function isSameMatrix(left: Matrix, right: Matrix): boolean {
+  return left.every((row, rowIndex) =>
+    row.every((value, columnIndex) => value === right[rowIndex][columnIndex]),
+  );
+}
+
+/**
  * 행렬의 전치(transpose)를 만든다.
  *
  * 전치는 i번째 행을 i번째 열로 바꾸는 연산이다.
@@ -153,17 +175,16 @@ export function getRotationDegrees(matrix: Matrix): number | null {
     return null;
   }
 
-  return isSameMatrix(matrix, expectedMatrix) ? normalizedAngle : null;
+  return isApproximatelyEqualMatrix(matrix, expectedMatrix) ? normalizedAngle : null;
 }
 
 /**
- * 두 행렬이 오차 범위 안에서 같은지 비교한다.
+ * 두 행렬이 부동소수점 오차 범위 안에서 같은지 비교한다.
  *
- * @param left 첫 번째 2x2 행렬
- * @param right 두 번째 2x2 행렬
- * @returns 네 원소가 모두 거의 같으면 true
+ * 회전 행렬처럼 sin/cos 계산 결과를 비교할 때 쓴다.
+ * 정확한 ===  비교가 필요하면 isSameMatrix를 쓰자.
  */
-function isSameMatrix(left: Matrix, right: Matrix): boolean {
+export function isApproximatelyEqualMatrix(left: Matrix, right: Matrix): boolean {
   return left.every((row, rowIndex) =>
     row.every((value, columnIndex) =>
       approximatelyEqual(value, right[rowIndex][columnIndex]),

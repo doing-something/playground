@@ -1,4 +1,5 @@
 import { getMatchingPresetLabel, matrixPresets } from "./data.js";
+import { cloneMatrix } from "../shared/matrix.js";
 import type { Matrix } from "../shared/types.js";
 
 type MatrixChangeHandler = (matrix: Matrix) => void;
@@ -101,10 +102,6 @@ function formatNumber(value: number): string {
   return Number.isInteger(value)
     ? String(value)
     : value.toFixed(4).replace(/\.?0+$/, "");
-}
-
-function cloneMatrix(matrix: Matrix): Matrix {
-  return matrix.map((row) => [...row]);
 }
 
 function getMatrixInputs(): MatrixInputMap {

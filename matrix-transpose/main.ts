@@ -1,6 +1,6 @@
 import { getCanvasContext } from "../shared/canvas2d.js";
 import { renderDemoShell } from "../shared/demo-shell.js";
-import { transpose } from "../shared/matrix.js";
+import { cloneMatrix, transpose } from "../shared/matrix.js";
 import type { Matrix } from "../shared/types.js";
 import {
   BASIS_VECTORS,
@@ -52,10 +52,6 @@ function main() {
   });
 
   renderCurrent(canvas, ctx, currentMatrix);
-}
-
-function cloneMatrix(source: Matrix): Matrix {
-  return source.map((row) => [...row]);
 }
 
 main();

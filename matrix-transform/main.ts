@@ -9,7 +9,7 @@ import { renderScene } from "./canvas.js";
 import { getCanvasContext } from "../shared/canvas2d.js";
 import { renderDemoShell } from "../shared/demo-shell.js";
 import { renderExplanation } from "./explain.js";
-import { getRotationDegrees, transformBasisVectors, transformShape } from "../shared/matrix.js";
+import { cloneMatrix, getRotationDegrees, transformBasisVectors, transformShape } from "../shared/matrix.js";
 import type { Matrix } from "../shared/types.js";
 import {
   ANALYSIS_HTML,
@@ -19,18 +19,6 @@ import {
 } from "./templates.js";
 import { setupMatrixControls } from "./ui.js";
 import { readMatrixFromQuery, writeMatrixToQuery } from "./url-state.js";
-
-/**
- * 2차원 행렬을 값까지 복사한 새 배열로 만든다.
- *
- * 입력 UI가 값을 바꿔도 기본 행렬 상수가 직접 수정되지 않게 분리한다.
- *
- * @param source 복사할 행렬
- * @returns 같은 값을 가진 새 행렬
- */
-function cloneMatrix(source: Matrix): Matrix {
-  return source.map((row) => [...row]);
-}
 
 /**
  * 현재 행렬 상태를 기준으로 장면을 다시 계산하고 렌더링한다.

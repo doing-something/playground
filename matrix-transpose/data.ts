@@ -1,4 +1,4 @@
-import { createRotationMatrix } from "../shared/matrix.js";
+import { createRotationMatrix, isSameMatrix } from "../shared/matrix.js";
 import type { Matrix, Vector } from "../shared/types.js";
 
 export const CANVAS_ID = "transpose-canvas";
@@ -46,15 +46,3 @@ export function getMatchingPresetLabel(target: Matrix): string | null {
   return preset?.label ?? null;
 }
 
-/**
- * 두 2x2 행렬이 같은 값을 가지는지 비교한다.
- *
- * @param left 첫 번째 행렬
- * @param right 두 번째 행렬
- * @returns 네 원소가 모두 같으면 true
- */
-function isSameMatrix(left: Matrix, right: Matrix): boolean {
-  return left.every((row, rowIndex) =>
-    row.every((value, columnIndex) => value === right[rowIndex][columnIndex]),
-  );
-}

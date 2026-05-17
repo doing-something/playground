@@ -1,4 +1,4 @@
-import { getRotationDegrees } from "../shared/matrix.js";
+import { getRotationDegrees, isSameMatrix } from "../shared/matrix.js";
 import type { Matrix } from "../shared/types.js";
 
 type ExplanationElements = {
@@ -65,12 +65,6 @@ function formatDegrees(degrees: number): string {
   return Number.isInteger(degrees)
     ? String(degrees)
     : degrees.toFixed(1).replace(/\.?0+$/, "");
-}
-
-function isSameMatrix(left: Matrix, right: Matrix): boolean {
-  return left.every((row, rowIndex) =>
-    row.every((value, columnIndex) => value === right[rowIndex][columnIndex]),
-  );
 }
 
 function getExplanationElements(): ExplanationElements {

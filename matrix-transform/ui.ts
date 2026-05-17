@@ -1,5 +1,5 @@
 import { getMatchingPresetLabel, matrixPresets } from "./data.js";
-import { createRotationMatrix, getRotationDegrees } from "../shared/matrix.js";
+import { cloneMatrix, createRotationMatrix, getRotationDegrees } from "../shared/matrix.js";
 import type { Matrix } from "../shared/types.js";
 
 type MatrixChangeHandler = (matrix: Matrix, transformName: string) => void;
@@ -354,16 +354,6 @@ function formatDegrees(degrees: number): string {
   return Number.isInteger(degrees)
     ? String(degrees)
     : degrees.toFixed(1).replace(/\.?0+$/, "");
-}
-
-/**
- * 행렬 값을 독립적인 새 배열로 복사한다.
- *
- * @param matrix 복사할 2x2 행렬
- * @returns 같은 값을 가진 새 행렬
- */
-function cloneMatrix(matrix: Matrix): Matrix {
-  return matrix.map((row) => [...row]);
 }
 
 /**

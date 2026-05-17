@@ -1,3 +1,4 @@
+import { cloneMatrix, isSameMatrix } from "../shared/matrix.js";
 import type { Matrix } from "../shared/types.js";
 
 /**
@@ -60,25 +61,3 @@ export function writeMatrixToQuery(matrix: Matrix, defaultMatrix: Matrix) {
   window.history.replaceState(null, "", nextUrl);
 }
 
-/**
- * 2차원 행렬을 값까지 복사한 새 배열로 만든다.
- *
- * @param source 복사할 행렬
- * @returns 같은 값을 가진 새 행렬
- */
-function cloneMatrix(source: Matrix): Matrix {
-  return source.map((row) => [...row]);
-}
-
-/**
- * 두 2x2 행렬이 같은 값을 가지는지 비교한다.
- *
- * @param left 첫 번째 행렬
- * @param right 두 번째 행렬
- * @returns 네 원소가 모두 같으면 true
- */
-function isSameMatrix(left: Matrix, right: Matrix): boolean {
-  return left.every((row, rowIndex) =>
-    row.every((value, columnIndex) => value === right[rowIndex][columnIndex]),
-  );
-}
