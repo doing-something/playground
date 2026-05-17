@@ -1,4 +1,4 @@
-import type { Matrix, Vector } from "../shared/types.js";
+import type { Matrix, Vector } from "./types.js";
 
 const EPSILON = 1e-4;
 

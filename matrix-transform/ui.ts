@@ -1,5 +1,5 @@
 import { getMatchingPresetLabel, matrixPresets } from "./data.js";
-import { createRotationMatrix, getRotationDegrees } from "./math.js";
+import { createRotationMatrix, getRotationDegrees } from "../shared/matrix.js";
 import type { Matrix } from "../shared/types.js";
 
 type MatrixChangeHandler = (matrix: Matrix, transformName: string) => void;
