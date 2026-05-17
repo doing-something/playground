@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>행렬 곱셈 = 변환의 합성</title>
+    <link rel="stylesheet" href="../shared/demo.css">
+    <style>
+        main {
+            width: min(1120px, calc(100% - 32px));
+        }
+
+        .matrix-input-group {
+            margin-bottom: 18px;
+        }
+
+        .matrix-input-group:last-of-type {
+            margin-bottom: 0;
+        }
+
+        .matrix-input-title {
+            margin: 0 0 8px;
+            font-size: 0.95rem;
+            letter-spacing: -0.01em;
+        }
+
+        @media (min-width: 900px) {
+            .layout {
+                grid-template-columns: 280px minmax(0, 1fr) 280px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+    <script type="module" src="../dist/matrix-compose/main.js"></script>
+</body>
+</html>
