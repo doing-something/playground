@@ -5,7 +5,8 @@ import {
   matrix,
   triangle,
 } from "./data.js";
-import { getCanvasContext, renderScene } from "./canvas.js";
+import { renderScene } from "./canvas.js";
+import { getCanvasContext } from "../shared/canvas2d.js";
 import { renderExplanation } from "./explain.js";
 import { getRotationDegrees, transformBasisVectors, transformShape } from "../shared/matrix.js";
 import type { Matrix } from "../shared/types.js";
