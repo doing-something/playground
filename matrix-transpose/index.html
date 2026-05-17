@@ -18,66 +18,7 @@
     </style>
 </head>
 <body>
-    <main>
-        <a class="back-link" href="../">← 데모 목록으로</a>
-        <h1>전치 시각화: A와 Aᵀ 비교</h1>
-        <p>
-            같은 단위 정사각형에 행렬 <code>A</code>와 그 전치 <code>Aᵀ</code>를 적용한 결과를
-            한 화면에서 비교합니다. 회전 행렬, shear, 대칭 행렬에서 전치가
-            기하적으로 어떤 의미인지 한눈에 확인하세요.
-        </p>
-        <div class="layout">
-            <section class="control-panel" aria-labelledby="matrix-controls-title">
-                <h2 id="matrix-controls-title">행렬 입력</h2>
-                <p>
-                    2x2 행렬 <code>A</code>의 네 원소입니다. 값을 바꾸거나 프리셋을 눌러보세요.
-                </p>
-                <form id="matrix-form" class="matrix-form">
-                    <div class="matrix-row">
-                        <label class="matrix-cell" for="matrix-a">
-                            a
-                            <input id="matrix-a" name="matrix-a" type="number" step="any">
-                        </label>
-                        <label class="matrix-cell" for="matrix-b">
-                            b
-                            <input id="matrix-b" name="matrix-b" type="number" step="any">
-                        </label>
-                    </div>
-                    <div class="matrix-row">
-                        <label class="matrix-cell" for="matrix-c">
-                            c
-                            <input id="matrix-c" name="matrix-c" type="number" step="any">
-                        </label>
-                        <label class="matrix-cell" for="matrix-d">
-                            d
-                            <input id="matrix-d" name="matrix-d" type="number" step="any">
-                        </label>
-                    </div>
-                </form>
-                <div class="preset-group" aria-labelledby="preset-group-title">
-                    <h3 id="preset-group-title">프리셋</h3>
-                    <div id="matrix-presets" class="preset-list"></div>
-                </div>
-            </section>
-            <section class="canvas-panel">
-                <canvas id="transpose-canvas" width="720" height="480"></canvas>
-            </section>
-            <section class="explanation-panel" aria-labelledby="transpose-analysis-title">
-                <h2 id="transpose-analysis-title">A와 Aᵀ</h2>
-                <p id="transpose-summary" class="summary-text">
-                    A를 적용한 도형(파랑)과 Aᵀ를 적용한 도형(주황)을 비교하세요.
-                </p>
-                <div class="analysis-card">
-                    <h3>A</h3>
-                    <code id="matrix-display">[[1, 1], [0, 1]]</code>
-                </div>
-                <div class="analysis-card">
-                    <h3>Aᵀ</h3>
-                    <code id="transpose-display">[[1, 0], [1, 1]]</code>
-                </div>
-            </section>
-        </div>
-    </main>
+    <div id="app"></div>
     <script type="module" src="../dist/matrix-transpose/main.js"></script>
 </body>
 </html>

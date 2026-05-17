@@ -1,4 +1,5 @@
 import { getCanvasContext } from "../shared/canvas2d.js";
+import { renderDemoShell } from "../shared/demo-shell.js";
 import { transpose } from "../shared/matrix.js";
 import type { Matrix } from "../shared/types.js";
 import {
@@ -9,6 +10,12 @@ import {
 } from "./data.js";
 import { renderExplanation } from "./explain.js";
 import { renderScene } from "./render.js";
+import {
+  ANALYSIS_HTML,
+  CANVAS_HTML,
+  CONTROLS_HTML,
+  INTRO_HTML,
+} from "./templates.js";
 import { setupMatrixControls } from "./ui.js";
 
 function renderCurrent(
@@ -28,6 +35,14 @@ function renderCurrent(
 }
 
 function main() {
+  renderDemoShell({
+    title: "전치 시각화: A와 Aᵀ 비교",
+    intro: INTRO_HTML,
+    controls: CONTROLS_HTML,
+    canvas: CANVAS_HTML,
+    analysis: ANALYSIS_HTML,
+  });
+
   const { canvas, ctx } = getCanvasContext(CANVAS_ID);
   let currentMatrix = cloneMatrix(DEFAULT_MATRIX);
 
