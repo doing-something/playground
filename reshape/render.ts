@@ -1,4 +1,5 @@
 import { isValidReshape, shapeLabel, type Shape } from "./data.js";
+import { reshape } from "./reshape.js";
 
 type SceneInput = {
   originalHeight: number;
@@ -9,10 +10,11 @@ type SceneInput = {
 const TITLE_FONT = '14px -apple-system, "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif';
 
 /**
- * 같은 데이터(0..N-1 인덱스)를 두 가지 모양으로 좌·우에 그린다.
+ * 같은 1D 데이터([0..N-1])를 두 가지 모양으로 좌·우 격자에 그린다.
  *
- * 각 셀의 색(hue 그라데이션)과 번호가 reshape 후에도 그대로 유지되어,
- * "메모리 순서는 같고 모양만 바뀐다"는 사실이 한눈에 보이게 한다.
+ * 원본 격자도, 새 격자도 모두 같은 1D 인덱스 배열을 reshape() 한 결과다.
+ * 각 셀의 색(hue 그라데이션)과 번호는 데이터 그 자체이므로
+ * "메모리 순서는 같고 모양만 바뀐다"는 사실이 그림에 그대로 드러난다.
  */
 export function renderScene(
   canvas: HTMLCanvasElement,
@@ -21,6 +23,8 @@ export function renderScene(
 ) {
   const { originalHeight, originalWidth, shape } = input;
   const total = originalHeight * originalWidth;
+  const data = Array.from({ length: total }, (_, index) => index);
+  const originalMatrix = reshape(data, originalHeight, originalWidth);
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -35,20 +39,20 @@ export function renderScene(
     y: margin + titleHeight,
     maxWidth: halfWidth,
     maxHeight: gridHeight,
-    rows: originalHeight,
-    cols: originalWidth,
+    matrix: originalMatrix,
     total,
     title: `원본 (${originalHeight}, ${originalWidth})`,
   });
 
   if (isValidReshape(shape)) {
+    const targetMatrix = reshape(data, shape.rows, shape.cols);
+
     drawIndexedGrid(ctx, {
       x: margin + halfWidth + gap,
       y: margin + titleHeight,
       maxWidth: halfWidth,
       maxHeight: gridHeight,
-      rows: shape.rows,
-      cols: shape.cols,
+      matrix: targetMatrix,
       total,
       title: `reshape ${shapeLabel(shape)}`,
     });
@@ -77,14 +81,15 @@ type GridOptions = {
   y: number;
   maxWidth: number;
   maxHeight: number;
-  rows: number;
-  cols: number;
+  matrix: number[][];
   total: number;
   title: string;
 };
 
 function drawIndexedGrid(ctx: CanvasRenderingContext2D, options: GridOptions) {
-  const { x, y, maxWidth, maxHeight, rows, cols, total, title } = options;
+  const { x, y, maxWidth, maxHeight, matrix, total, title } = options;
+  const rows = matrix.length;
+  const cols = matrix[0]?.length ?? 0;
 
   const cellSize = Math.min(maxWidth / cols, maxHeight / rows);
   const gridWidth = cellSize * cols;
@@ -99,29 +104,30 @@ function drawIndexedGrid(ctx: CanvasRenderingContext2D, options: GridOptions) {
   ctx.fillText(title, x + maxWidth / 2, y - 12);
   ctx.restore();
 
-  for (let index = 0; index < total; index += 1) {
-    const row = Math.floor(index / cols);
-    const col = index % cols;
-    const cx = gridX + col * cellSize;
-    const cy = gridY + row * cellSize;
+  for (let row = 0; row < rows; row += 1) {
+    for (let col = 0; col < cols; col += 1) {
+      const value = matrix[row][col];
+      const cx = gridX + col * cellSize;
+      const cy = gridY + row * cellSize;
 
-    const hue = (360 * index) / total;
-    ctx.fillStyle = `hsl(${hue}, 62%, 70%)`;
-    ctx.fillRect(cx, cy, cellSize, cellSize);
+      const hue = (360 * value) / total;
+      ctx.fillStyle = `hsl(${hue}, 62%, 70%)`;
+      ctx.fillRect(cx, cy, cellSize, cellSize);
 
-    ctx.strokeStyle = "rgba(15, 23, 42, 0.35)";
-    ctx.lineWidth = 1;
-    ctx.strokeRect(cx, cy, cellSize, cellSize);
+      ctx.strokeStyle = "rgba(15, 23, 42, 0.35)";
+      ctx.lineWidth = 1;
+      ctx.strokeRect(cx, cy, cellSize, cellSize);
 
-    const fontSize = Math.min(cellSize * 0.42, 18);
-    if (fontSize >= 9) {
-      ctx.save();
-      ctx.fillStyle = "#0f172a";
-      ctx.font = `${fontSize}px -apple-system, "SF Mono", "Consolas", monospace`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText(String(index), cx + cellSize / 2, cy + cellSize / 2);
-      ctx.restore();
+      const fontSize = Math.min(cellSize * 0.42, 18);
+      if (fontSize >= 9) {
+        ctx.save();
+        ctx.fillStyle = "#0f172a";
+        ctx.font = `${fontSize}px -apple-system, "SF Mono", "Consolas", monospace`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(String(value), cx + cellSize / 2, cy + cellSize / 2);
+        ctx.restore();
+      }
     }
   }
 }
