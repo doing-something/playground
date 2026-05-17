@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>reshape 시각화</title>
+    <link rel="stylesheet" href="../shared/demo.css">
+    <style>
+        main {
+            width: min(1080px, calc(100% - 32px));
+        }
+
+        .status-ok {
+            color: #166534;
+        }
+
+        .status-error {
+            color: #b91c1c;
+        }
+
+        @media (min-width: 900px) {
+            .layout {
+                grid-template-columns: 260px minmax(0, 1fr) 280px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+    <script type="module" src="../dist/reshape/main.js"></script>
+</body>
+</html>
