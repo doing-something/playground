@@ -1,6 +1,16 @@
 # Playground demos
 
-이 저장소는 여러 개의 데모 예시를 모아두는 용도입니다. 현재 첫 번째 예시는 `matrix-transform`입니다.
+선형대수와 변환을 손으로 만져 보는 작은 데모 모음.
+GitHub Pages로 배포되어 있어 아래 링크에서 바로 열 수 있습니다.
+
+## 배포된 데모
+
+- **데모 목록 홈**: https://doing-something.github.io/playground/
+- [matrix-transform](https://doing-something.github.io/playground/matrix-transform/) — 2x2 행렬로 삼각형이 어떻게 변하는지
+- [matrix-transpose](https://doing-something.github.io/playground/matrix-transpose/) — A와 Aᵀ를 한 화면에서 비교
+- [matrix-compose](https://doing-something.github.io/playground/matrix-compose/) — 행렬 곱 = 변환의 합성
+- [reshape](https://doing-something.github.io/playground/reshape/) — 같은 데이터를 다른 모양으로 reshape
+- [canvas-matrix](https://doing-something.github.io/playground/canvas-matrix/) — Canvas API가 내부에서 쌓는 3×3 affine 행렬
 
 ## 시작
 
