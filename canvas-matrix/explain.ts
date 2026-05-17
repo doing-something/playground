@@ -71,7 +71,7 @@ function formatNumber(value: number): string {
 
 function padNumber(value: number): string {
   const text = formatNumber(value);
-  return text.padStart(6, " ");
+  return text.padStart(5, " ");
 }
 
 function getRequiredElement(id: string): HTMLElement {
