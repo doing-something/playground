@@ -36,7 +36,11 @@ function formatDOMMatrix(matrix: AffineMatrix): string {
   const d = formatNumber(matrix[1][1]);
   const e = formatNumber(matrix[0][2]);
   const f = formatNumber(matrix[1][2]);
-  return `{ a: ${a}, b: ${b}, c: ${c}, d: ${d}, e: ${e}, f: ${f} }`;
+  return `{
+  a: ${a}, b: ${b},
+  c: ${c}, d: ${d},
+  e: ${e}, f: ${f}
+}`;
 }
 
 function stepsToCanvasCode(steps: Step[]): string {
@@ -67,7 +71,7 @@ function formatNumber(value: number): string {
 
 function padNumber(value: number): string {
   const text = formatNumber(value);
-  return text.padStart(8, " ");
+  return text.padStart(6, " ");
 }
 
 function getRequiredElement(id: string): HTMLElement {

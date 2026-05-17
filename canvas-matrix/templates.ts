@@ -42,7 +42,7 @@ export const ANALYSIS_HTML = `
     </div>
     <div class="analysis-card">
       <h3>DOMMatrix.getTransform()</h3>
-      <code id="dom-matrix"></code>
+      <pre id="dom-matrix"></pre>
     </div>
     <div class="analysis-card">
       <h3>동등한 Canvas 코드</h3>
