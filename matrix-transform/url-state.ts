@@ -1,4 +1,4 @@
-import type { Matrix } from "./types.js";
+import type { Matrix } from "../shared/types.js";
 
 /**
  * URL 쿼리스트링에서 2x2 행렬 상태를 읽는다.

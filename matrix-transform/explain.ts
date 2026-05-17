@@ -1,5 +1,5 @@
 import { determinant2x2, getRotationDegrees } from "./math.js";
-import type { Matrix, Vector } from "./types.js";
+import type { Matrix, Vector } from "../shared/types.js";
 
 const EPSILON = 1e-9;
 

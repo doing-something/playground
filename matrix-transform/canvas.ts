@@ -1,5 +1,5 @@
 import { multiplyMatrixVector } from "./math.js";
-import type { Matrix, Vector } from "./types.js";
+import type { Matrix, Vector } from "../shared/types.js";
 
 const CANVAS_PADDING = 48;
 const GRID_EXTENT = 3;

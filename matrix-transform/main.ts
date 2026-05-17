@@ -8,7 +8,7 @@ import {
 import { getCanvasContext, renderScene } from "./canvas.js";
 import { renderExplanation } from "./explain.js";
 import { getRotationDegrees, transformBasisVectors, transformShape } from "./math.js";
-import type { Matrix } from "./types.js";
+import type { Matrix } from "../shared/types.js";
 import { setupMatrixControls } from "./ui.js";
 import { readMatrixFromQuery, writeMatrixToQuery } from "./url-state.js";
 
