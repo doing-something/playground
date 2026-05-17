@@ -39,21 +39,30 @@ export function renderDemoShell(options: DemoShellOptions) {
   `;
 }
 
+type Matrix2x2FormOptions = {
+  formId?: string;
+  inputPrefix?: string;
+};
+
 /**
  * 2x2 행렬 입력칸 4개(a, b, c, d)를 담은 form 마크업을 만든다.
  *
- * id는 matrix-a/b/c/d로 고정이므로 한 페이지에 하나만 둘 수 있다.
+ * inputPrefix를 지정하면 id가 `${prefix}-a` 형태가 되어 한 페이지에
+ * 여러 행렬 form을 둘 수 있다(예: 합성 데모의 A와 B).
  */
-export function matrix2x2FormHTML(formId = "matrix-form"): string {
+export function matrix2x2FormHTML(options: Matrix2x2FormOptions = {}): string {
+  const formId = options.formId ?? "matrix-form";
+  const prefix = options.inputPrefix ?? "matrix";
+
   return `
     <form id="${formId}" class="matrix-form">
       <div class="matrix-row">
-        ${matrix2x2CellHTML("matrix-a", "a")}
-        ${matrix2x2CellHTML("matrix-b", "b")}
+        ${matrix2x2CellHTML(`${prefix}-a`, "a")}
+        ${matrix2x2CellHTML(`${prefix}-b`, "b")}
       </div>
       <div class="matrix-row">
-        ${matrix2x2CellHTML("matrix-c", "c")}
-        ${matrix2x2CellHTML("matrix-d", "d")}
+        ${matrix2x2CellHTML(`${prefix}-c`, "c")}
+        ${matrix2x2CellHTML(`${prefix}-d`, "d")}
       </div>
     </form>
   `;

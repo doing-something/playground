@@ -77,6 +77,45 @@ export function isSameMatrix(left: Matrix, right: Matrix): boolean {
 }
 
 /**
+ * 두 행렬을 곱한다. 결과 = left · right.
+ *
+ * 곱셈 정의상 left의 열 수와 right의 행 수가 같아야 한다.
+ * 결과 행렬의 (i, j) 원소는 left의 i번째 행과 right의 j번째 열의 내적이다.
+ *
+ * 기하적으로 (left · right) · v 는 v에 right를 먼저 적용한 뒤
+ * left를 다시 적용한 결과와 같다.
+ *
+ * @throws {Error} 두 행렬이 비어 있거나 차원이 맞지 않는 경우
+ */
+export function multiplyMatrices(left: Matrix, right: Matrix): Matrix {
+  if (left.length === 0 || right.length === 0) {
+    throw new Error("행렬이 비어 있습니다.");
+  }
+
+  const innerSize = left[0].length;
+  if (innerSize !== right.length) {
+    throw new Error("left의 열 수와 right의 행 수가 다릅니다.");
+  }
+
+  const rightColumnCount = right[0].length;
+  if (!left.every((row) => row.length === innerSize)) {
+    throw new Error("left 행렬의 각 행 길이가 일치하지 않습니다.");
+  }
+  if (!right.every((row) => row.length === rightColumnCount)) {
+    throw new Error("right 행렬의 각 행 길이가 일치하지 않습니다.");
+  }
+
+  return left.map((leftRow) =>
+    Array.from({ length: rightColumnCount }, (_, columnIndex) =>
+      leftRow.reduce(
+        (sum, value, innerIndex) => sum + value * right[innerIndex][columnIndex],
+        0,
+      ),
+    ),
+  );
+}
+
+/**
  * 행렬의 전치(transpose)를 만든다.
  *
  * 전치는 i번째 행을 i번째 열로 바꾸는 연산이다.
