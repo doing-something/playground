@@ -49,6 +49,11 @@ jobs:
           mkdir -p _site
           cp index.html _site/index.html
           cp -R matrix-transform _site/matrix-transform
+          cp -R matrix-transpose _site/matrix-transpose
+          cp -R matrix-compose _site/matrix-compose
+          cp -R reshape _site/reshape
+          cp -R canvas-matrix _site/canvas-matrix
+          cp -R shared _site/shared
           cp -R dist _site/dist
 
       - name: Upload artifact
