@@ -7,9 +7,16 @@ import {
 } from "./data.js";
 import { renderScene } from "./canvas.js";
 import { getCanvasContext } from "../shared/canvas2d.js";
+import { renderDemoShell } from "../shared/demo-shell.js";
 import { renderExplanation } from "./explain.js";
 import { getRotationDegrees, transformBasisVectors, transformShape } from "../shared/matrix.js";
 import type { Matrix } from "../shared/types.js";
+import {
+  ANALYSIS_HTML,
+  CANVAS_HTML,
+  CONTROLS_HTML,
+  INTRO_HTML,
+} from "./templates.js";
 import { setupMatrixControls } from "./ui.js";
 import { readMatrixFromQuery, writeMatrixToQuery } from "./url-state.js";
 
@@ -92,6 +99,14 @@ function formatDegrees(degrees: number): string {
 }
 
 function main() {
+  renderDemoShell({
+    title: "삼각형으로 보는 2x2 행렬 변환",
+    intro: INTRO_HTML,
+    controls: CONTROLS_HTML,
+    canvas: CANVAS_HTML,
+    analysis: ANALYSIS_HTML,
+  });
+
   const { canvas, ctx } = getCanvasContext(CANVAS_ID);
   let currentMatrix = readMatrixFromQuery(matrix);
   let currentTransformName = getTransformName(currentMatrix);
