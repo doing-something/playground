@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>전치 시각화: A와 Aᵀ 비교</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --bg: #f8fafc;
+            --panel: rgba(255, 255, 255, 0.88);
+            --line: #cbd5e1;
+            --text: #0f172a;
+            --muted: #475569;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: -apple-system, "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top, rgba(59, 130, 246, 0.16), transparent 36%),
+                linear-gradient(180deg, #eff6ff 0%, var(--bg) 100%);
+        }
+
+        main {
+            width: min(1080px, calc(100% - 32px));
+            margin: 40px auto;
+            padding: 28px;
+            border: 1px solid rgba(148, 163, 184, 0.28);
+            border-radius: 24px;
+            background: var(--panel);
+            box-shadow: 0 24px 70px rgba(15, 23, 42, 0.08);
+            backdrop-filter: blur(12px);
+        }
+
+        h1 {
+            margin: 0 0 12px;
+            font-size: clamp(2rem, 4vw, 2.6rem);
+            letter-spacing: -0.04em;
+        }
+
+        p {
+            margin: 0 0 20px;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        code {
+            padding: 2px 6px;
+            border-radius: 999px;
+            background: rgba(148, 163, 184, 0.16);
+            font-family: "SF Mono", "Consolas", monospace;
+        }
+
+        .layout {
+            display: grid;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .control-panel,
+        .explanation-panel {
+            padding: 20px;
+            border: 1px solid rgba(148, 163, 184, 0.24);
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.72);
+        }
+
+        .control-panel h2,
+        .explanation-panel h2 {
+            margin: 0 0 10px;
+            font-size: 1.1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .matrix-form {
+            display: grid;
+            gap: 10px;
+            width: fit-content;
+        }
+
+        .matrix-row {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(72px, 88px));
+            gap: 10px;
+        }
+
+        .matrix-cell {
+            display: grid;
+            gap: 6px;
+            font-size: 0.9rem;
+            color: var(--muted);
+        }
+
+        .matrix-cell input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid rgba(148, 163, 184, 0.4);
+            border-radius: 12px;
+            background: #fff;
+            color: var(--text);
+            font: inherit;
+        }
+
+        .matrix-cell input:focus {
+            outline: 2px solid rgba(37, 99, 235, 0.22);
+            border-color: rgba(37, 99, 235, 0.5);
+        }
+
+        .preset-group {
+            margin-top: 18px;
+            display: grid;
+            gap: 10px;
+        }
+
+        .preset-group h3 {
+            margin: 0;
+            font-size: 0.95rem;
+            letter-spacing: -0.01em;
+        }
+
+        .preset-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .preset-button {
+            padding: 8px 12px;
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            border-radius: 999px;
+            background: #fff;
+            color: var(--text);
+            font: inherit;
+            cursor: pointer;
+        }
+
+        .preset-button:hover {
+            border-color: rgba(37, 99, 235, 0.45);
+            background: rgba(239, 246, 255, 0.8);
+        }
+
+        .preset-button-active {
+            border-color: rgba(37, 99, 235, 0.5);
+            background: rgba(219, 234, 254, 0.95);
+            color: #1d4ed8;
+            font-weight: 600;
+            box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.1);
+        }
+
+        .canvas-panel {
+            display: grid;
+            gap: 14px;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            max-width: 720px;
+            margin: 0 auto;
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            background: #fff;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .analysis-card {
+            margin-top: 14px;
+            padding: 14px 16px;
+            border-radius: 14px;
+            background: rgba(241, 245, 249, 0.72);
+            border: 1px solid rgba(148, 163, 184, 0.18);
+        }
+
+        .analysis-card h3 {
+            margin: 0 0 6px;
+            font-size: 0.92rem;
+            letter-spacing: -0.01em;
+            color: var(--muted);
+        }
+
+        .analysis-card code {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 10px;
+        }
+
+        .summary-text {
+            margin: 0;
+            font-size: 0.96rem;
+            line-height: 1.6;
+            color: var(--text);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 16px;
+            font-size: 0.9rem;
+            color: #1d4ed8;
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (min-width: 900px) {
+            .layout {
+                grid-template-columns: 260px minmax(0, 1fr) 280px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <a class="back-link" href="../">← 데모 목록으로</a>
+        <h1>전치 시각화: A와 Aᵀ 비교</h1>
+        <p>
+            같은 단위 정사각형에 행렬 <code>A</code>와 그 전치 <code>Aᵀ</code>를 적용한 결과를
+            한 화면에서 비교합니다. 회전 행렬, shear, 대칭 행렬에서 전치가
+            기하적으로 어떤 의미인지 한눈에 확인하세요.
+        </p>
+        <div class="layout">
+            <section class="control-panel" aria-labelledby="matrix-controls-title">
+                <h2 id="matrix-controls-title">행렬 입력</h2>
+                <p>
+                    2x2 행렬 <code>A</code>의 네 원소입니다. 값을 바꾸거나 프리셋을 눌러보세요.
+                </p>
+                <form id="matrix-form" class="matrix-form">
+                    <div class="matrix-row">
+                        <label class="matrix-cell" for="matrix-a">
+                            a
+                            <input id="matrix-a" name="matrix-a" type="number" step="any">
+                        </label>
+                        <label class="matrix-cell" for="matrix-b">
+                            b
+                            <input id="matrix-b" name="matrix-b" type="number" step="any">
+                        </label>
+                    </div>
+                    <div class="matrix-row">
+                        <label class="matrix-cell" for="matrix-c">
+                            c
+                            <input id="matrix-c" name="matrix-c" type="number" step="any">
+                        </label>
+                        <label class="matrix-cell" for="matrix-d">
+                            d
+                            <input id="matrix-d" name="matrix-d" type="number" step="any">
+                        </label>
+                    </div>
+                </form>
+                <div class="preset-group" aria-labelledby="preset-group-title">
+                    <h3 id="preset-group-title">프리셋</h3>
+                    <div id="matrix-presets" class="preset-list"></div>
+                </div>
+            </section>
+            <section class="canvas-panel">
+                <canvas id="transpose-canvas" width="720" height="480"></canvas>
+            </section>
+            <section class="explanation-panel" aria-labelledby="transpose-analysis-title">
+                <h2 id="transpose-analysis-title">A와 Aᵀ</h2>
+                <p id="transpose-summary" class="summary-text">
+                    A를 적용한 도형(파랑)과 Aᵀ를 적용한 도형(주황)을 비교하세요.
+                </p>
+                <div class="analysis-card">
+                    <h3>A</h3>
+                    <code id="matrix-display">[[1, 1], [0, 1]]</code>
+                </div>
+                <div class="analysis-card">
+                    <h3>Aᵀ</h3>
+                    <code id="transpose-display">[[1, 0], [1, 1]]</code>
+                </div>
+            </section>
+        </div>
+    </main>
+    <script type="module" src="../dist/matrix-transpose/main.js"></script>
+</body>
+</html>
