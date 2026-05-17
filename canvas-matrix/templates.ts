@@ -5,6 +5,9 @@ export const INTRO_HTML = `
   내부에서 어떻게 3×3 affine 변환 행렬을 쌓아 가는지 살펴봅니다.
   단계를 추가·삭제·조정하면 누적 행렬, <code>ctx.getTransform()</code>이 돌려주는
   DOMMatrix, 그리고 단위 정사각형에 적용된 결과가 함께 갱신됩니다.
+  affine 변환의 일반 정의는
+  <a href="https://kr.mathworks.com/discovery/affine-transformation.html" target="_blank" rel="noopener noreferrer">MathWorks: Affine Transformation</a>
+  참고.
 `;
 
 export const CONTROLS_HTML = `
