@@ -1,5 +1,6 @@
 const SigmoidMath = window.SigmoidMath;
 const ReLUMath = window.ReLUMath;
+const SoftmaxMath = window.SoftmaxMath;
 
 /**
  * weight 슬라이더의 최솟값이다.
@@ -44,6 +45,20 @@ const DEFAULT_RELU_STATE = {
 };
 
 /**
+ * Softmax 음식 추천기 기본 상태다.
+ * 초기값부터 메뉴 간 선호 차이와 temperature 효과가 잘 드러나도록 잡았다.
+ */
+const DEFAULT_SOFTMAX_STATE = {
+  scores: {
+    burger: 2,
+    pasta: 4,
+    sushi: 6,
+    stew: 5,
+  },
+  temperature: 1,
+};
+
+/**
  * 공부 시간으로 합격 여부를 예측하는 고정 학생 데이터셋이다.
  *
  * 완전히 선형 분리되지 않도록 일부 예외 데이터를 섞어 두었다.
@@ -65,16 +80,6 @@ const STUDENTS = [
   { hours: 7.8, id: "s10", name: "학생 J", passed: 1 },
   { hours: 8.5, id: "s11", name: "학생 K", passed: 1 },
 ];
-
-/**
- * 시그모이드 외 탭에 사용할 placeholder 정보다.
- */
-const TAB_PLACEHOLDERS = {
-  softmax: {
-    description: "Softmax 탭은 다음 단계에서 여러 logit 입력과 확률 막대 그래프를 추가하면 됩니다.",
-    title: "Softmax",
-  },
-};
 
 /**
  * x축 눈금 목록이다.
@@ -134,6 +139,8 @@ function SigmoidJudgeDemo() {
   const [selectedStudentId, setSelectedStudentId] = React.useState(STUDENTS[5].id);
   const [usage, setUsage] = React.useState(DEFAULT_RELU_STATE.usage);
   const [allowance, setAllowance] = React.useState(DEFAULT_RELU_STATE.allowance);
+  const [temperature, setTemperature] = React.useState(DEFAULT_SOFTMAX_STATE.temperature);
+  const [menuScores, setMenuScores] = React.useState(DEFAULT_SOFTMAX_STATE.scores);
 
   const frame = { height: 300, left: 72, top: 28, width: 700 };
 
@@ -584,7 +591,12 @@ function SigmoidJudgeDemo() {
             usage={usage}
           />
         ) : (
-          <PlaceholderTab {...TAB_PLACEHOLDERS[activeTab]} />
+          <SoftmaxLunchDemo
+            menuScores={menuScores}
+            setMenuScores={setMenuScores}
+            setTemperature={setTemperature}
+            temperature={temperature}
+          />
         )}
       </section>
     </main>
@@ -890,6 +902,240 @@ function ReLUBillingDemo(props) {
           </p>
         </div>
       </section>
+    </section>
+  );
+}
+
+function SoftmaxLunchDemo(props) {
+  const {
+    menuScores,
+    setMenuScores,
+    setTemperature,
+    temperature,
+  } = props;
+
+  const menus = [
+    { color: "#ef4444", id: "stew", label: "김치찌개" },
+    { color: "#f59e0b", id: "pasta", label: "파스타" },
+    { color: "#06b6d4", id: "sushi", label: "초밥" },
+    { color: "#8b5cf6", id: "burger", label: "햄버거" },
+  ];
+  const scores = menus.map((menu) => menuScores[menu.id]);
+  const probabilities = SoftmaxMath.computeSoftmax(scores, temperature);
+  const topIndex = SoftmaxMath.getTopIndex(probabilities);
+  const topMenu = menus[topIndex];
+  const topProbability = probabilities[topIndex];
+  let startAngle = -Math.PI / 2;
+
+  const slices = probabilities.map((probability, index) => {
+    const sweep = probability * Math.PI * 2;
+    const endAngle = startAngle + sweep;
+    const path = SoftmaxMath.buildArcPath(220, 190, 130, startAngle, endAngle);
+    const middleAngle = startAngle + sweep / 2;
+    const labelX = 220 + 88 * Math.cos(middleAngle);
+    const labelY = 190 + 88 * Math.sin(middleAngle);
+    startAngle = endAngle;
+
+    return {
+      index,
+      labelX,
+      labelY,
+      path,
+      probability,
+    };
+  });
+
+  return (
+    <section className="grid gap-8 p-6 lg:p-8">
+      <div>
+        <p className="text-xs font-bold uppercase tracking-[0.18em] text-violet-700">Softmax Food Demo</p>
+        <h2 className="mt-2 text-3xl font-bold tracking-[-0.04em] text-slate-900">점심 메뉴 추천기</h2>
+        <p className="mt-3 max-w-3xl leading-7 text-slate-600">
+          Softmax는 여러 점수를 <span className="font-semibold text-slate-900">확률 분포</span>로 바꿉니다.
+          하나의 메뉴 점수를 올리면 그 메뉴 확률이 커지는 대신, 나머지 메뉴 확률은 자동으로 줄어드는 경쟁 구조가 생깁니다.
+        </p>
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-2">
+        {menus.map((menu) => (
+          <SliderControl
+            key={menu.id}
+            description={`${menu.label} 선호도를 조절해보세요`}
+            digits={1}
+            id={`softmax-${menu.id}`}
+            label={menu.label}
+            max={SoftmaxMath.SOFTMAX_SCORE_MAX}
+            min={SoftmaxMath.SOFTMAX_SCORE_MIN}
+            step={0.1}
+            unit=""
+            value={menuScores[menu.id]}
+            onChange={(value) =>
+              setMenuScores((current) => ({
+                ...current,
+                [menu.id]: value,
+              }))
+            }
+          />
+        ))}
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-[1fr_1.3fr]">
+        <SliderControl
+          description="낮으면 1등에 몰리고, 높으면 확률이 골고루 퍼집니다"
+          digits={1}
+          id="softmax-temperature"
+          label="temperature"
+          max={SoftmaxMath.SOFTMAX_TEMPERATURE_MAX}
+          min={SoftmaxMath.SOFTMAX_TEMPERATURE_MIN}
+          step={0.1}
+          unit=""
+          value={temperature}
+          onChange={setTemperature}
+        />
+        <section className="rounded-[24px] border border-slate-200 bg-white p-6">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">Result</p>
+          <div className="mt-4 text-3xl font-black tracking-[-0.04em] text-slate-900">
+            오늘의 추천: {topMenu.label} ({formatFixed(topProbability * 100, 1)}%)
+          </div>
+          <p className="mt-3 leading-7 text-slate-600">
+            temperature가 <span className="font-semibold text-slate-900">{formatFixed(temperature, 1)}</span> 이므로,
+            현재 분포는 {temperature < 0.7 ? "1등 메뉴에 강하게 몰리는" : temperature > 1.8 ? "비교적 골고루 퍼지는" : "적당히 차이를 반영하는"} 상태입니다.
+          </p>
+        </section>
+      </div>
+
+      <div className="grid min-w-0 gap-4 lg:grid-cols-[0.95fr,1.05fr]">
+        <section className="rounded-[28px] border border-slate-200 bg-slate-50/80 p-4 lg:p-6">
+          <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-violet-700">Pie Chart</p>
+              <h3 className="mt-2 text-2xl font-bold tracking-[-0.03em] text-slate-900">메뉴별 선택 확률</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                각 조각은 메뉴가 추천될 확률 비중입니다. 한 메뉴 점수를 올리면 그 조각이 커지고, 다른 조각은 줄어듭니다.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid min-w-0 gap-6 xl:grid-cols-[minmax(0,440px)_minmax(0,1fr)]">
+            <svg viewBox="0 0 440 380" className="mx-auto h-auto w-full max-w-[440px] min-w-0">
+              {slices.map((slice) => (
+                <g key={menus[slice.index].id}>
+                  <path d={slice.path} fill={menus[slice.index].color} stroke="#fff" strokeWidth="3" />
+                  <text
+                    x={slice.labelX}
+                    y={slice.labelY}
+                    textAnchor="middle"
+                    className="fill-white text-[12px] font-bold"
+                  >
+                    {`${formatFixed(slice.probability * 100, 0)}%`}
+                  </text>
+                </g>
+              ))}
+              <circle cx="220" cy="190" r="54" fill="white" />
+              <text x="220" y="182" textAnchor="middle" className="fill-slate-500 text-[12px] font-semibold">
+                top pick
+              </text>
+              <text x="220" y="206" textAnchor="middle" className="fill-slate-900 text-[16px] font-bold">
+                {topMenu.label}
+              </text>
+            </svg>
+
+            <div className="grid min-w-0 w-full content-start gap-3 overflow-hidden">
+              {menus.map((menu, index) => (
+                <div key={menu.id} className="min-w-0 w-full overflow-hidden rounded-2xl border border-slate-200 bg-white px-4 py-4">
+                  <div className="flex min-w-0 items-center justify-between gap-3">
+                    <div className="flex min-w-0 items-center gap-3">
+                      <span className="h-4 w-4 rounded-full" style={{ backgroundColor: menu.color }} />
+                      <span className="truncate font-semibold text-slate-900">{menu.label}</span>
+                    </div>
+                    <span className="shrink-0 text-sm text-slate-500">score {formatFixed(menuScores[menu.id], 1)}</span>
+                  </div>
+                  <div className="mt-2 truncate text-2xl font-bold tracking-[-0.03em] text-slate-900">
+                    {formatFixed(probabilities[index] * 100, 1)}%
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <div className="grid gap-4">
+          <section className="rounded-[24px] border border-slate-200 bg-white p-6">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">Why Softmax</p>
+            <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm leading-7 text-slate-600">
+              <p>
+                Softmax는 여러 메뉴 점수를 <span className="font-semibold text-slate-900">전체 합이 1인 확률 분포</span>로 바꿉니다.
+              </p>
+              <p className="mt-3">
+                그래서 하나의 메뉴 점수를 올리면 그 메뉴 확률이 커지는 동시에, 나머지 메뉴 확률은 상대적으로 줄어듭니다.
+                이게 바로 <span className="font-semibold text-slate-900">경쟁 구조</span>입니다.
+              </p>
+              <p className="mt-3">
+                temperature는 이 경쟁의 날카로움을 조절합니다. LLM에서 말하는 temperature도 같은 개념으로,
+                낮을수록 한 답에 몰리고 높을수록 더 다양한 선택지에 확률이 퍼집니다.
+              </p>
+            </div>
+          </section>
+
+          <section className="rounded-[24px] border border-slate-200 bg-slate-50 p-6">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">Math</p>
+            <div className="mt-4 space-y-4 text-slate-700">
+              <MathCard>
+                <math display="block">
+                  <mrow>
+                    <mi>softmax</mi>
+                    <mo>(</mo>
+                    <msub><mi>z</mi><mi>i</mi></msub>
+                    <mo>)</mo>
+                    <mo>=</mo>
+                    <mfrac>
+                      <msup>
+                        <mi>e</mi>
+                        <mfrac>
+                          <msub><mi>z</mi><mi>i</mi></msub>
+                          <mi>T</mi>
+                        </mfrac>
+                      </msup>
+                      <mrow>
+                        <munderover><mo>&Sigma;</mo><mi>j</mi><mi></mi></munderover>
+                        <msup>
+                          <mi>e</mi>
+                          <mfrac>
+                            <msub><mi>z</mi><mi>j</mi></msub>
+                            <mi>T</mi>
+                          </mfrac>
+                        </msup>
+                      </mrow>
+                    </mfrac>
+                  </mrow>
+                </math>
+              </MathCard>
+              <MathCard>
+                <math display="block">
+                  <mrow>
+                    <mi>T</mi>
+                    <mo>=</mo>
+                    <mn>{formatFixed(temperature, 1)}</mn>
+                  </mrow>
+                </math>
+              </MathCard>
+              <MathCard>
+                <math display="block">
+                  <mrow>
+                    <mi>top</mi>
+                    <mo>=</mo>
+                    <mi>{topMenu.label}</mi>
+                    <mo>,</mo>
+                    <mi>P</mi>
+                    <mo>=</mo>
+                    <mn>{formatFixed(topProbability, 4)}</mn>
+                  </mrow>
+                </math>
+              </MathCard>
+            </div>
+          </section>
+        </div>
+      </div>
     </section>
   );
 }
