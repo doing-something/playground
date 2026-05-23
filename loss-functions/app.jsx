@@ -5,10 +5,8 @@ const LOSS_TABS = [
     title: "Multiclass Cross-Entropy Loss",
   },
   {
-    description: "이 탭 안에 이진 분류용 입력과 시각화 콘텐츠를 추가하면 됩니다.",
+    description: "이메일 스팸 분류 시나리오로 binary cross-entropy loss를 단계별로 따라갑니다.",
     id: "bce",
-    inputHint: "예: 예측 확률, 정답 라벨(0/1)",
-    resultHint: "예: BCE 공식, log penalty 곡선, loss 값",
     title: "Binary Cross-Entropy Loss",
   },
   {
@@ -94,7 +92,9 @@ function LossFunctionsPage() {
         >
           {activeScreen.id === "mcce"
             ? <window.MulticlassCrossEntropyDemo />
-            : <PlaceholderScreen screen={activeScreen} />}
+            : activeScreen.id === "bce"
+              ? <window.BinaryCrossEntropyDemo />
+              : <PlaceholderScreen screen={activeScreen} />}
         </section>
       </section>
     </main>
