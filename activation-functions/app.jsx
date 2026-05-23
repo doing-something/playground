@@ -477,7 +477,7 @@ function SigmoidJudgeDemo() {
                   <MathCard>
                     <math display="block">
                       <mrow>
-                        <mi>&sigma;</mi>
+                        <mi>σ</mi>
                         <mo>(</mo>
                         <mi>z</mi>
                         <mo>)</mo>
@@ -519,7 +519,7 @@ function SigmoidJudgeDemo() {
                           </mrow>
                           <mn>{formatFixed(weight, 2)}</mn>
                         </mfrac>
-                        <mo>&approx;</mo>
+                        <mo>≈</mo>
                         <mn>{formatFixed(decisionBoundary, 2)}</mn>
                       </mrow>
                     </math>
@@ -873,11 +873,11 @@ function ReLUBillingDemo(props) {
                   <mo>(</mo>
                   <mi>x</mi>
                   <mo>)</mo>
-                  <mo>&times;</mo>
+                  <mo>×</mo>
                   <mi>price</mi>
                   <mo>=</mo>
                   <mn>{formatFixed(chargeableUsage, 1)}</mn>
-                  <mo>&times;</mo>
+                  <mo>×</mo>
                   <mn>{ReLUMath.RELU_PRICE_PER_GB}</mn>
                 </mrow>
               </math>
@@ -1097,7 +1097,7 @@ function SoftmaxLunchDemo(props) {
                         </mfrac>
                       </msup>
                       <mrow>
-                        <munderover><mo>&Sigma;</mo><mi>j</mi><mi></mi></munderover>
+                        <munderover><mo>Σ</mo><mi>j</mi><mi></mi></munderover>
                         <msup>
                           <mi>e</mi>
                           <mfrac>
