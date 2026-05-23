@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loss Functions</title>
+    <link rel="stylesheet" href="../shared/demo.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {},
+            },
+        };
+    </script>
+    <style>
+        main {
+            width: min(1180px, calc(100% - 32px));
+        }
+
+        .loss-shell {
+            display: grid;
+            gap: 0;
+            padding: 24px;
+            border: 1px solid rgba(148, 163, 184, 0.24);
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.72);
+        }
+
+        .tab-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.28);
+        }
+
+        .tab-button {
+            margin-bottom: -1px;
+            padding: 14px 20px;
+            border: 0;
+            border-bottom: 2px solid transparent;
+            background: transparent;
+            color: #334155;
+            font: inherit;
+            cursor: pointer;
+            transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+        }
+
+        .tab-button:hover {
+            background: rgba(248, 250, 252, 0.92);
+        }
+
+        .tab-button-active {
+            border-bottom-color: #2563eb;
+            color: #1d4ed8;
+            font-weight: 600;
+        }
+
+        .tab-screen {
+            display: grid;
+            gap: 24px;
+            padding-top: 28px;
+        }
+
+        .tab-screen[hidden] {
+            display: none !important;
+        }
+
+        .screen-kicker {
+            margin: 0 0 8px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: #2563eb;
+        }
+
+        .screen-header h2 {
+            margin: 0;
+            font-size: clamp(2rem, 4vw, 2.8rem);
+            letter-spacing: -0.04em;
+        }
+
+        .screen-description {
+            margin: 10px 0 0;
+            max-width: 58ch;
+        }
+
+        .screen-grid {
+            display: grid;
+            gap: 18px;
+        }
+
+        .placeholder-card {
+            display: grid;
+            align-content: start;
+            gap: 10px;
+            min-height: 180px;
+            padding: 20px;
+            border-radius: 20px;
+            border: 1px solid rgba(148, 163, 184, 0.22);
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.92)),
+                linear-gradient(135deg, rgba(37, 99, 235, 0.04), rgba(14, 165, 233, 0.06));
+        }
+
+        .placeholder-card h3 {
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        .placeholder-card p {
+            margin: 0;
+        }
+
+        .placeholder-stage {
+            min-height: 320px;
+        }
+
+        @media (min-width: 960px) {
+            .layout {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .screen-grid {
+                grid-template-columns: 280px minmax(0, 1fr);
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.16),transparent_36%),linear-gradient(180deg,#eff6ff_0%,#f8fafc_100%)]">
+    <div id="react-root"></div>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script type="text/babel" data-presets="react" src="./app.jsx"></script>
+</body>
+</html>

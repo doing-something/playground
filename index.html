@@ -4,6 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Playground Demos</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {},
+      },
+    };
+  </script>
   <style>
     :root {
       color-scheme: light;
@@ -91,65 +99,10 @@
   </style>
 </head>
 <body>
-  <main>
-    <h1>Playground Demos</h1>
-    <p class="intro">선형대수와 변환을 손으로 만져 보는 작은 데모 모음.</p>
-    <ul>
-      <li>
-        <a href="./matrix-transform/">
-          <span class="demo-title">matrix-transform</span>
-          <span class="demo-description">
-            2x2 행렬 하나로 삼각형이 어떻게 변하는지 확인합니다.
-            회전·확대·shear·반사를 직접 조정하며 직관을 잡습니다.
-          </span>
-        </a>
-      </li>
-      <li>
-        <a href="./matrix-transpose/">
-          <span class="demo-title">matrix-transpose</span>
-          <span class="demo-description">
-            같은 단위 정사각형에 A와 Aᵀ를 적용해 한 화면에서 비교합니다.
-            대칭·회전·shear의 전치가 시각적으로 무엇인지 확인합니다.
-          </span>
-        </a>
-      </li>
-      <li>
-        <a href="./matrix-compose/">
-          <span class="demo-title">matrix-compose</span>
-          <span class="demo-description">
-            두 행렬의 곱 C = A·B가 변환의 합성과 같다는 사실을 보여줍니다.
-            "B 다음 A"의 단계적 결과와 C 한 번 적용 결과가 같은 자리에 있는지 확인합니다.
-          </span>
-        </a>
-      </li>
-      <li>
-        <a href="./reshape/">
-          <span class="demo-title">reshape</span>
-          <span class="demo-description">
-            같은 16개 데이터를 (1, 16) / (2, 8) / (4, 4) 등 다른 모양으로 다시 보는 모습.
-            PyTorch <code>tensor.reshape</code>와 <code>nn.Flatten</code>이 무엇인지 이해할 수 있습니다.
-          </span>
-        </a>
-      </li>
-      <li>
-        <a href="./canvas-matrix/">
-          <span class="demo-title">canvas-matrix</span>
-          <span class="demo-description">
-            Canvas API의 <code>translate / rotate / scale</code>이 내부에서 어떻게
-            3×3 affine 행렬을 누적하는지, 평행이동까지 포함한 변환 합성을 살펴봅니다.
-          </span>
-        </a>
-      </li>
-      <li>
-        <a href="./activation-functions/">
-          <span class="demo-title">activation-functions</span>
-          <span class="demo-description">
-            Sigmoid, ReLU, Softmax를 탭으로 전환하며 입력값과 출력의 관계를 시각적으로 확인합니다.
-            분류 확률과 비선형성이 어떻게 생기는지 빠르게 감을 잡을 수 있습니다.
-          </span>
-        </a>
-      </li>
-    </ul>
-  </main>
+  <div id="react-root"></div>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script type="text/babel" data-presets="react" src="./home.jsx"></script>
 </body>
 </html>
