@@ -1,4 +1,5 @@
 const SigmoidMath = window.SigmoidMath;
+const ReLUMath = window.ReLUMath;
 
 /**
  * weight 슬라이더의 최솟값이다.
@@ -34,6 +35,15 @@ const DEFAULT_SIGMOID_STATE = {
 };
 
 /**
+ * ReLU 요금 계산기 기본 상태다.
+ * 처음 열었을 때 무료/과금 구간이 둘 다 잘 보이도록 잡았다.
+ */
+const DEFAULT_RELU_STATE = {
+  allowance: 6,
+  usage: 9,
+};
+
+/**
  * 공부 시간으로 합격 여부를 예측하는 고정 학생 데이터셋이다.
  *
  * 완전히 선형 분리되지 않도록 일부 예외 데이터를 섞어 두었다.
@@ -60,10 +70,6 @@ const STUDENTS = [
  * 시그모이드 외 탭에 사용할 placeholder 정보다.
  */
 const TAB_PLACEHOLDERS = {
-  relu: {
-    description: "ReLU 탭은 다음 단계에서 입력값과 꺾인 선 그래프를 추가하면 됩니다.",
-    title: "ReLU",
-  },
   softmax: {
     description: "Softmax 탭은 다음 단계에서 여러 logit 입력과 확률 막대 그래프를 추가하면 됩니다.",
     title: "Softmax",
@@ -126,6 +132,8 @@ function SigmoidJudgeDemo() {
   const [weight, setWeight] = React.useState(DEFAULT_SIGMOID_STATE.weight);
   const [bias, setBias] = React.useState(DEFAULT_SIGMOID_STATE.bias);
   const [selectedStudentId, setSelectedStudentId] = React.useState(STUDENTS[5].id);
+  const [usage, setUsage] = React.useState(DEFAULT_RELU_STATE.usage);
+  const [allowance, setAllowance] = React.useState(DEFAULT_RELU_STATE.allowance);
 
   const frame = { height: 300, left: 72, top: 28, width: 700 };
 
@@ -568,6 +576,13 @@ function SigmoidJudgeDemo() {
               </div>
             </section>
           </section>
+        ) : activeTab === "relu" ? (
+          <ReLUBillingDemo
+            allowance={allowance}
+            setAllowance={setAllowance}
+            setUsage={setUsage}
+            usage={usage}
+          />
         ) : (
           <PlaceholderTab {...TAB_PLACEHOLDERS[activeTab]} />
         )}
@@ -643,12 +658,252 @@ function MetricCard({ label, value }) {
   );
 }
 
+function ReLUBillingDemo(props) {
+  const {
+    allowance,
+    setAllowance,
+    setUsage,
+    usage,
+  } = props;
+
+  const usageDelta = ReLUMath.computeUsageDelta(usage, allowance);
+  const chargeableUsage = ReLUMath.computeChargeableUsage(usage, allowance);
+  const charge = ReLUMath.computeCharge(chargeableUsage);
+  const chartMax = ReLUMath.RELU_USAGE_MAX;
+  const usageHeight = (usage / chartMax) * 240;
+  const chargeableHeight = (chargeableUsage / chartMax) * 240;
+  const allowanceY = 280 - (allowance / chartMax) * 240;
+
+  return (
+    <section className="grid gap-8 p-6 lg:p-8">
+      <div>
+        <p className="text-xs font-bold uppercase tracking-[0.18em] text-emerald-700">ReLU Billing Demo</p>
+        <h2 className="mt-2 text-3xl font-bold tracking-[-0.04em] text-slate-900">모바일 데이터 요금 계산기</h2>
+        <p className="mt-3 max-w-3xl leading-7 text-slate-600">
+          ReLU는 <span className="font-semibold text-slate-900">max(0, x)</span> 입니다. 이 데모에서는
+          <span className="font-semibold text-slate-900"> 기본 제공량 이하는 무시하고, 초과분만 통과</span>시키는 함수로 읽을 수 있습니다.
+        </p>
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-2">
+        <SliderControl
+          description="이번 달 사용량을 바꿔보세요"
+          digits={1}
+          id="relu-usage"
+          label="사용량"
+          max={ReLUMath.RELU_USAGE_MAX}
+          min={ReLUMath.RELU_USAGE_MIN}
+          step={0.1}
+          unit="GB"
+          value={usage}
+          onChange={setUsage}
+        />
+        <SliderControl
+          description="무료로 제공되는 데이터 양입니다"
+          digits={1}
+          id="relu-allowance"
+          label="기본 제공량"
+          max={ReLUMath.RELU_ALLOWANCE_MAX}
+          min={ReLUMath.RELU_ALLOWANCE_MIN}
+          step={0.1}
+          unit="GB"
+          value={allowance}
+          onChange={setAllowance}
+        />
+      </div>
+
+      <div className="rounded-[28px] border border-slate-200 bg-slate-50/80 p-4 lg:p-6">
+        <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-emerald-700">Bar Graph</p>
+            <h3 className="mt-2 text-2xl font-bold tracking-[-0.03em] text-slate-900">사용량과 과금 대상량</h3>
+            <p className="mt-2 text-sm leading-6 text-slate-600">
+              왼쪽 막대는 전체 사용량, 오른쪽 막대는 ReLU를 통과한 과금 대상 사용량입니다.
+              기본 제공량 기준선 아래는 무료 구간입니다.
+            </p>
+          </div>
+          <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600">
+            <div className="font-semibold text-slate-900">현재 요금 규칙</div>
+            <div className="mt-1">초과분만 과금, GB당 {formatCurrency(ReLUMath.RELU_PRICE_PER_GB)}</div>
+          </div>
+        </div>
+
+        <div className="mb-4 flex flex-wrap gap-4 text-sm text-slate-600">
+          <div className="flex items-center gap-2">
+            <span className="h-3 w-3 rounded-sm bg-sky-500" />
+            <span>전체 사용량</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="h-3 w-3 rounded-sm bg-emerald-500" />
+            <span>ReLU 적용 후 과금 대상량</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="h-px w-5 border-t-2 border-dashed border-slate-700" />
+            <span>기본 제공량 기준선</span>
+          </div>
+        </div>
+
+        <svg viewBox="0 0 760 340" className="h-auto w-full overflow-visible">
+          <line x1="90" x2="90" y1="40" y2="280" stroke="#64748b" strokeWidth="1.5" />
+          <line x1="90" x2="700" y1="280" y2="280" stroke="#64748b" strokeWidth="1.5" />
+
+          {[0, 5, 10, 15, 20].map((tick) => {
+            const y = 280 - (tick / chartMax) * 240;
+            return (
+              <g key={tick}>
+                <line x1="90" x2="700" y1={y} y2={y} stroke="#e2e8f0" strokeDasharray="4 8" />
+                <text x="78" y={y + 4} textAnchor="end" className="fill-slate-500 text-[12px]">
+                  {tick}GB
+                </text>
+              </g>
+            );
+          })}
+
+          <line x1="90" x2="700" y1={allowanceY} y2={allowanceY} stroke="#0f172a" strokeDasharray="8 8" strokeWidth="2" />
+          <text x="694" y={allowanceY - 8} textAnchor="end" className="fill-slate-900 text-[12px] font-semibold">
+            기본 제공량 {formatFixed(allowance, 1)}GB
+          </text>
+
+          <rect x="190" y={280 - usageHeight} width="120" height={usageHeight} rx="20" fill="#38bdf8" />
+          <rect x="450" y={280 - chargeableHeight} width="120" height={chargeableHeight} rx="20" fill="#10b981" />
+
+          <text x="250" y="304" textAnchor="middle" className="fill-slate-700 text-[13px] font-semibold">
+            전체 사용량
+          </text>
+          <text x="510" y="304" textAnchor="middle" className="fill-slate-700 text-[13px] font-semibold">
+            ReLU 후 과금 대상
+          </text>
+
+          <text x="250" y={Math.max(52, 280 - usageHeight - 10)} textAnchor="middle" className="fill-slate-900 text-[13px] font-semibold">
+            {formatFixed(usage, 1)}GB
+          </text>
+          <text x="510" y={Math.max(52, 280 - chargeableHeight - 10)} textAnchor="middle" className="fill-slate-900 text-[13px] font-semibold">
+            {formatFixed(chargeableUsage, 1)}GB
+          </text>
+        </svg>
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-[0.9fr,1.1fr]">
+        <section className="rounded-[24px] border border-slate-200 bg-white p-6">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">Result</p>
+          <div className="mt-4 grid gap-3 sm:grid-cols-3">
+            <MetricCard label="초과량" value={`${formatFixed(usageDelta, 1)}GB`} />
+            <MetricCard label="ReLU 출력" value={`${formatFixed(chargeableUsage, 1)}GB`} />
+            <MetricCard label="요금" value={formatCurrency(charge)} />
+          </div>
+
+          <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm leading-7 text-slate-600">
+            <p>
+              사용량이 기본 제공량 이하이면 <span className="font-semibold text-slate-900">usage - allowance</span> 가 음수라서
+              <span className="font-semibold text-slate-900"> ReLU(음수) = 0</span> 이 됩니다.
+            </p>
+            <p className="mt-2">
+              사용량이 기준을 넘으면 초과분이 양수로 남고, ReLU는 그 값을 그대로 통과시킵니다.
+            </p>
+          </div>
+        </section>
+
+        <section className="rounded-[24px] border border-slate-200 bg-slate-50 p-6">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">Math</p>
+          <div className="mt-4 space-y-4 text-slate-700">
+            <MathCard>
+              <math display="block">
+                <mrow>
+                  <mi>ReLU</mi>
+                  <mo>(</mo>
+                  <mi>x</mi>
+                  <mo>)</mo>
+                  <mo>=</mo>
+                  <mi>max</mi>
+                  <mo>(</mo>
+                  <mn>0</mn>
+                  <mo>,</mo>
+                  <mi>x</mi>
+                  <mo>)</mo>
+                </mrow>
+              </math>
+            </MathCard>
+            <MathCard>
+              <math display="block">
+                <mrow>
+                  <mi>x</mi>
+                  <mo>=</mo>
+                  <mi>usage</mi>
+                  <mo>-</mo>
+                  <mi>allowance</mi>
+                  <mo>=</mo>
+                  <mn>{formatFixed(usage, 1)}</mn>
+                  <mo>-</mo>
+                  <mn>{formatFixed(allowance, 1)}</mn>
+                  <mo>=</mo>
+                  <mn>{formatFixed(usageDelta, 1)}</mn>
+                </mrow>
+              </math>
+            </MathCard>
+            <MathCard>
+              <math display="block">
+                <mrow>
+                  <mi>ReLU</mi>
+                  <mo>(</mo>
+                  <mn>{formatFixed(usageDelta, 1)}</mn>
+                  <mo>)</mo>
+                  <mo>=</mo>
+                  <mn>{formatFixed(chargeableUsage, 1)}</mn>
+                </mrow>
+              </math>
+            </MathCard>
+            <MathCard>
+              <math display="block">
+                <mrow>
+                  <mi>charge</mi>
+                  <mo>=</mo>
+                  <mi>ReLU</mi>
+                  <mo>(</mo>
+                  <mi>x</mi>
+                  <mo>)</mo>
+                  <mo>&times;</mo>
+                  <mi>price</mi>
+                  <mo>=</mo>
+                  <mn>{formatFixed(chargeableUsage, 1)}</mn>
+                  <mo>&times;</mo>
+                  <mn>{ReLUMath.RELU_PRICE_PER_GB}</mn>
+                </mrow>
+              </math>
+            </MathCard>
+          </div>
+        </section>
+      </div>
+
+      <section className="rounded-[24px] border border-slate-200 bg-white p-6">
+        <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">Why ReLU</p>
+        <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm leading-7 text-slate-600">
+          <p>
+            ReLU는 <span className="font-semibold text-slate-900">기준 이하는 잘라내고, 기준 초과분만 남기는 함수</span>로 읽으면 직관적입니다.
+          </p>
+          <p className="mt-3">
+            이 데모에서는 기준이 <span className="font-semibold text-slate-900">기본 제공량</span>이고,
+            잘려 나간 값은 <span className="font-semibold text-slate-900">무료 구간</span>입니다.
+          </p>
+          <p className="mt-3">
+            그래서 <span className="font-semibold text-slate-900">ReLU = max(0, x)</span> 라는 수식이
+            "초과 사용량이 없으면 0원, 있으면 초과분만 과금"이라는 익숙한 규칙으로 바로 연결됩니다.
+          </p>
+        </div>
+      </section>
+    </section>
+  );
+}
+
 function MathCard({ children }) {
   return (
     <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4 text-lg">
       {children}
     </div>
   );
+}
+
+function formatCurrency(value) {
+  return `${Math.round(value).toLocaleString("ko-KR")}원`;
 }
 
 function PlaceholderTab({ description, title }) {
