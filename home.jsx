@@ -41,6 +41,12 @@ const DEMOS = [
     href: "./loss-functions/",
     title: "loss-functions",
   },
+  {
+    description:
+      "입력, 가중합, sigmoid, MSE를 4단계 슬라이드로 따라가며 단일 뉴런이 어떻게 이진 분류 확률을 만드는지 확인합니다.",
+    href: "./single-neuron/",
+    title: "single-neuron",
+  },
 ];
 
 function HomePage() {
