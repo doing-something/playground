@@ -10,10 +10,8 @@ const LOSS_TABS = [
     title: "Binary Cross-Entropy Loss",
   },
   {
-    description: "이 탭 안에 회귀용 입력과 시각화 콘텐츠를 추가하면 됩니다.",
+    description: "집값 예측 시나리오로 RMSE 계산 과정을 단계별로 따라갑니다.",
     id: "rmse",
-    inputHint: "예: 예측값 배열, 실제값 배열",
-    resultHint: "예: 오차 막대, 제곱 오차 평균, 루트 결과",
     title: "Root Mean Square Error (RMSE)",
   },
 ];
@@ -54,8 +52,8 @@ function LossFunctionsPage() {
         Loss Functions
       </h1>
       <p className="mb-6 max-w-3xl leading-7 text-slate-600">
-        손실 함수의 핵심 직관을 눈으로 확인하는 학습용 페이지입니다.
-        첫 탭에서는 동물 분류 시나리오로 multiclass cross-entropy loss를 직접 조작해 볼 수 있습니다.
+        Multiclass cross-entropy, binary cross-entropy, RMSE를 각각 조작해 보며,
+        손실이 어떻게 계산되고 왜 커지거나 작아지는지 눈으로 익히는 학습용 페이지입니다.
       </p>
 
       <section className="overflow-hidden rounded-3xl border border-slate-200 bg-white">
@@ -94,7 +92,9 @@ function LossFunctionsPage() {
             ? <window.MulticlassCrossEntropyDemo />
             : activeScreen.id === "bce"
               ? <window.BinaryCrossEntropyDemo />
-              : <PlaceholderScreen screen={activeScreen} />}
+              : activeScreen.id === "rmse"
+                ? <window.RMSEDemo />
+                : <PlaceholderScreen screen={activeScreen} />}
         </section>
       </section>
     </main>
