@@ -1,4 +1,4 @@
-import type { ActivationState, ActivationTab } from "./data.js";
+import { ACTIVATION_TABS, type ActivationState, type ActivationTab } from "./data.js";
 
 type ChangeHandler = (nextState: ActivationState) => void;
 
@@ -10,15 +10,27 @@ export function setupActivationControls(initialState: ActivationState, onChange:
 
   writeInputs(state, inputs);
   updateTabs(state.tab, tabButtons, screens);
+  updateHash(state.tab, "replace");
 
   for (const button of tabButtons) {
     button.addEventListener("click", () => {
       const tab = button.dataset.tab as ActivationTab;
-      state = { ...state, tab };
-      updateTabs(tab, tabButtons, screens);
-      onChange(state);
+      state = applyTabChange(state, tab, tabButtons, screens, onChange);
+      updateHash(tab, "push");
     });
   }
+
+  const syncTabFromLocation = () => {
+    const tab = getTabFromHash();
+    if (!tab || tab === state.tab) {
+      return;
+    }
+
+    state = applyTabChange(state, tab, tabButtons, screens, onChange);
+  };
+
+  window.addEventListener("hashchange", syncTabFromLocation);
+  window.addEventListener("popstate", syncTabFromLocation);
 
   inputs.sigmoidX.addEventListener("input", () => {
     state = { ...state, sigmoidX: readNumberInput(inputs.sigmoidX) };
@@ -51,6 +63,20 @@ export function setupActivationControls(initialState: ActivationState, onChange:
   });
 }
 
+function applyTabChange(
+  state: ActivationState,
+  tab: ActivationTab,
+  tabButtons: HTMLButtonElement[],
+  screens: HTMLElement[],
+  onChange: ChangeHandler,
+): ActivationState {
+  const nextState = { ...state, tab };
+  updateTabs(tab, tabButtons, screens);
+  onChange(nextState);
+
+  return nextState;
+}
+
 type ActivationInputs = {
   reluX: HTMLInputElement;
   reluXValue: HTMLOutputElement;
@@ -80,6 +106,29 @@ function updateTabs(
     panel.classList.toggle("tab-screen-active", isActive);
     panel.hidden = !isActive;
   }
+}
+
+function updateHash(tab: ActivationTab, mode: "push" | "replace") {
+  const nextHash = `#${tab}`;
+  if (window.location.hash === nextHash) {
+    return;
+  }
+
+  const nextUrl = `${window.location.pathname}${window.location.search}${nextHash}`;
+  if (mode === "replace") {
+    window.history.replaceState(null, "", nextUrl);
+    return;
+  }
+
+  window.history.pushState(null, "", nextUrl);
+}
+
+function getTabFromHash(): ActivationTab | null {
+  const tab = window.location.hash.replace(/^#/, "");
+
+  return ACTIVATION_TABS.includes(tab as ActivationTab)
+    ? tab as ActivationTab
+    : null;
 }
 
 function getTabButtons() {

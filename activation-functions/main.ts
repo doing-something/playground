@@ -1,6 +1,12 @@
 import { getCanvasContext } from "../shared/canvas2d.js";
 import { renderDemoShell } from "../shared/demo-shell.js";
-import { CANVAS_ID, DEFAULT_STATE, type ActivationState } from "./data.js";
+import {
+  ACTIVATION_TABS,
+  CANVAS_ID,
+  DEFAULT_STATE,
+  type ActivationState,
+  type ActivationTab,
+} from "./data.js";
 import { renderActivationDemo } from "./render.js";
 import { ANALYSIS_HTML, CANVAS_HTML, CONTROLS_HTML, INTRO_HTML } from "./templates.js";
 import { setupActivationControls } from "./ui.js";
@@ -24,7 +30,7 @@ function main() {
   });
 
   const { canvas, ctx } = getCanvasContext(CANVAS_ID);
-  let currentState = { ...DEFAULT_STATE };
+  let currentState = getInitialState();
 
   setupActivationControls(currentState, (nextState) => {
     currentState = { ...nextState };
@@ -35,6 +41,21 @@ function main() {
 }
 
 main();
+
+function getInitialState(): ActivationState {
+  return {
+    ...DEFAULT_STATE,
+    tab: getTabFromHash() ?? DEFAULT_STATE.tab,
+  };
+}
+
+function getTabFromHash(): ActivationTab | null {
+  const tab = window.location.hash.replace(/^#/, "");
+
+  return ACTIVATION_TABS.includes(tab as ActivationTab)
+    ? tab as ActivationTab
+    : null;
+}
 
 function renderAnalysis(state: ActivationState) {
   const formula = getRequiredElement("activation-formula");

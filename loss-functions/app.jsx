@@ -16,6 +16,26 @@ const LOSS_TABS = [
   },
 ];
 
+function getTabFromHash() {
+  const tab = window.location.hash.replace(/^#/, "");
+  return LOSS_TABS.some((item) => item.id === tab) ? tab : null;
+}
+
+function updateHash(tab, mode) {
+  const nextHash = `#${tab}`;
+  if (window.location.hash === nextHash) {
+    return;
+  }
+
+  const nextUrl = `${window.location.pathname}${window.location.search}${nextHash}`;
+  if (mode === "replace") {
+    window.history.replaceState(null, "", nextUrl);
+    return;
+  }
+
+  window.history.pushState(null, "", nextUrl);
+}
+
 function PlaceholderScreen({ screen }) {
   return (
     <>
@@ -40,8 +60,34 @@ function PlaceholderScreen({ screen }) {
 }
 
 function LossFunctionsPage() {
-  const [activeTab, setActiveTab] = React.useState("mcce");
+  const [activeTab, setActiveTab] = React.useState(() => getTabFromHash() ?? "mcce");
   const activeScreen = LOSS_TABS.find((tab) => tab.id === activeTab) ?? LOSS_TABS[0];
+
+  React.useEffect(() => {
+    updateHash(activeTab, "replace");
+  }, []);
+
+  React.useEffect(() => {
+    const syncTabFromLocation = () => {
+      const tab = getTabFromHash();
+      if (tab) {
+        setActiveTab(tab);
+      }
+    };
+
+    window.addEventListener("hashchange", syncTabFromLocation);
+    window.addEventListener("popstate", syncTabFromLocation);
+
+    return () => {
+      window.removeEventListener("hashchange", syncTabFromLocation);
+      window.removeEventListener("popstate", syncTabFromLocation);
+    };
+  }, []);
+
+  function selectTab(tab) {
+    setActiveTab(tab);
+    updateHash(tab, "push");
+  }
 
   return (
     <main className="mx-auto my-10 w-[min(1180px,calc(100%-32px))] rounded-3xl border border-slate-200/70 bg-white/85 p-7 shadow-[0_24px_70px_rgba(15,23,42,0.08)] backdrop-blur">
@@ -74,7 +120,7 @@ function LossFunctionsPage() {
                 role="tab"
                 aria-selected={isActive}
                 aria-controls={`panel-${tab.id}`}
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => selectTab(tab.id)}
               >
                 {tab.title}
               </button>
