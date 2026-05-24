@@ -51,6 +51,9 @@ jobs:
           cp home.jsx _site/home.jsx
           for demo in */index.html; do
             demo_dir="${demo%/index.html}"
+            if [ "$demo_dir" = "_site" ]; then
+              continue
+            fi
             cp -R "$demo_dir" "_site/$demo_dir"
           done
           cp -R shared _site/shared
