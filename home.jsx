@@ -47,6 +47,12 @@ const DEMOS = [
     href: "./single-neuron/",
     title: "single-neuron",
   },
+  {
+    description:
+      "단일 뉴런이 예측 오차를 이용해 gradient를 만들고, weight와 bias를 한 번 업데이트해 MSE를 줄이는 과정을 단계별로 따라갑니다.",
+    href: "./single-neuron-backpropagation/",
+    title: "single-neuron-backpropagation",
+  },
 ];
 
 function HomePage() {
