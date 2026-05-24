@@ -1,69 +1,69 @@
 export const INTRO_HTML = `
-  학습용 골격만 먼저 잡아 둔 페이지입니다.
-  Sigmoid, ReLU, Softmax를 탭으로 분리해 두었고, 각 탭 안에 입력과 결과 영역을 따로 둘 수 있게 구성했습니다.
+  Sigmoid, ReLU, Softmax가 입력값을 어떻게 바꾸는지 그래프와 숫자로 확인합니다.
+  탭을 바꾸고 입력을 조정하면 함수별 출력이 바로 갱신됩니다.
 `;
 
-export const CONTROLS_HTML = "";
-
-export const CANVAS_HTML = `
-  <section class="canvas-panel activation-canvas-panel">
-    <div class="tab-list" role="tablist" aria-label="Activation functions">
-      <button class="tab-button tab-button-active" id="tab-sigmoid" data-tab="sigmoid" role="tab" aria-selected="true" aria-controls="panel-sigmoid">Sigmoid</button>
-      <button class="tab-button" id="tab-relu" data-tab="relu" role="tab" aria-selected="false" aria-controls="panel-relu">ReLU</button>
-      <button class="tab-button" id="tab-softmax" data-tab="softmax" role="tab" aria-selected="false" aria-controls="panel-softmax">Softmax</button>
+export const CONTROLS_HTML = `
+  <section class="control-panel activation-controls">
+    <div>
+      <h2>함수 선택</h2>
+      <p>활성화 함수별 입력을 바꿔 출력 변화를 비교합니다.</p>
     </div>
-    <section class="tab-screen tab-screen-active" id="panel-sigmoid" data-panel="sigmoid" role="tabpanel" aria-labelledby="tab-sigmoid">
-      <div class="screen-header">
-        <p class="screen-kicker">Activation Function</p>
-        <h2>Sigmoid</h2>
-        <p class="screen-description">이 탭 안에 Sigmoid 전용 입력과 시각화 코드를 넣으면 됩니다.</p>
-      </div>
-      <div class="screen-grid">
-        <section class="placeholder-card">
-          <h3>입력 영역</h3>
-          <p>예: slider, number input, preset 버튼</p>
-        </section>
-        <section class="placeholder-card placeholder-stage">
-          <h3>시각화 / 결과 영역</h3>
-          <p>예: 그래프, 공식, 출력값</p>
-        </section>
-      </div>
+    <div class="tab-list" role="tablist" aria-label="Activation functions">
+      <button class="tab-button tab-button-active" id="tab-sigmoid" data-tab="sigmoid" type="button" role="tab" aria-selected="true" aria-controls="panel-sigmoid">Sigmoid</button>
+      <button class="tab-button" id="tab-relu" data-tab="relu" type="button" role="tab" aria-selected="false" aria-controls="panel-relu">ReLU</button>
+      <button class="tab-button" id="tab-softmax" data-tab="softmax" type="button" role="tab" aria-selected="false" aria-controls="panel-softmax">Softmax</button>
+    </div>
+    <section class="activation-panel" id="panel-sigmoid" data-panel="sigmoid" role="tabpanel" aria-labelledby="tab-sigmoid">
+      <label class="range-control" for="sigmoid-x">
+        <span class="range-head"><span>x</span><output id="sigmoid-x-value">0</output></span>
+        <input id="sigmoid-x" type="range" min="-8" max="8" step="0.1">
+      </label>
     </section>
-    <section class="tab-screen" id="panel-relu" data-panel="relu" role="tabpanel" aria-labelledby="tab-relu" hidden>
-      <div class="screen-header">
-        <p class="screen-kicker">Activation Function</p>
-        <h2>ReLU</h2>
-        <p class="screen-description">이 탭 안에 ReLU 전용 입력과 시각화 코드를 넣으면 됩니다.</p>
-      </div>
-      <div class="screen-grid">
-        <section class="placeholder-card">
-          <h3>입력 영역</h3>
-          <p>예: x 값 입력, 케이스 선택</p>
-        </section>
-        <section class="placeholder-card placeholder-stage">
-          <h3>시각화 / 결과 영역</h3>
-          <p>예: 꺾인 선 그래프, 출력값 표시</p>
-        </section>
-      </div>
+    <section class="activation-panel" id="panel-relu" data-panel="relu" role="tabpanel" aria-labelledby="tab-relu" hidden>
+      <label class="range-control" for="relu-x">
+        <span class="range-head"><span>x</span><output id="relu-x-value">1.5</output></span>
+        <input id="relu-x" type="range" min="-8" max="8" step="0.1">
+      </label>
     </section>
-    <section class="tab-screen" id="panel-softmax" data-panel="softmax" role="tabpanel" aria-labelledby="tab-softmax" hidden>
-      <div class="screen-header">
-        <p class="screen-kicker">Activation Function</p>
-        <h2>Softmax</h2>
-        <p class="screen-description">이 탭 안에 Softmax 전용 입력과 시각화 코드를 넣으면 됩니다.</p>
-      </div>
-      <div class="screen-grid">
-        <section class="placeholder-card">
-          <h3>입력 영역</h3>
-          <p>예: logit 배열 입력, 클래스 수 선택</p>
-        </section>
-        <section class="placeholder-card placeholder-stage">
-          <h3>시각화 / 결과 영역</h3>
-          <p>예: 확률 bar chart, 합계 1 표시</p>
-        </section>
+    <section class="activation-panel" id="panel-softmax" data-panel="softmax" role="tabpanel" aria-labelledby="tab-softmax" hidden>
+      <div class="input-grid">
+        <label class="range-control" for="softmax-a">
+          <span class="range-head"><span>logit A</span><output id="softmax-a-value">2</output></span>
+          <input id="softmax-a" type="range" min="-4" max="6" step="0.1">
+        </label>
+        <label class="range-control" for="softmax-b">
+          <span class="range-head"><span>logit B</span><output id="softmax-b-value">1</output></span>
+          <input id="softmax-b" type="range" min="-4" max="6" step="0.1">
+        </label>
+        <label class="range-control" for="softmax-c">
+          <span class="range-head"><span>logit C</span><output id="softmax-c-value">0.2</output></span>
+          <input id="softmax-c" type="range" min="-4" max="6" step="0.1">
+        </label>
       </div>
     </section>
   </section>
 `;
 
-export const ANALYSIS_HTML = "";
+export const CANVAS_HTML = `
+  <section class="canvas-panel">
+    <canvas id="activation-canvas" width="760" height="420" aria-label="Activation function graph"></canvas>
+  </section>
+`;
+
+export const ANALYSIS_HTML = `
+  <section class="explanation-panel activation-analysis">
+    <article class="analysis-card">
+      <h3>함수</h3>
+      <code id="activation-formula">σ(x) = 1 / (1 + e^-x)</code>
+    </article>
+    <article class="analysis-card">
+      <h3>입력</h3>
+      <code id="activation-input">x = 0</code>
+    </article>
+    <article class="analysis-card">
+      <h3>출력</h3>
+      <code id="activation-output">0.5</code>
+    </article>
+  </section>
+`;
