@@ -27,42 +27,47 @@ function ProbabilitySlider({ animal, index, onChange, probability }) {
   );
 }
 
-function LossBreakdownCard({ lossBreakdown, probabilities }) {
+function LossBreakdownCard({ lossBreakdown, probabilities, selectedAnimal }) {
   return (
     <section className="rounded-[28px] border border-slate-200 bg-slate-50/80 p-5 lg:p-6">
       <div className="mb-4">
-        <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-700">Step By Step</p>
-        <h3 className="mt-2 text-2xl font-bold tracking-[-0.03em] text-slate-900">계산 과정</h3>
+        <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-700">한 눈에 보기</p>
+        <h3 className="mt-2 text-2xl font-bold tracking-[-0.03em] text-slate-900">공식에서 현재 손실까지</h3>
         <p className="mt-2 text-sm leading-6 text-slate-600">
-          슬라이더를 움직이면 각 클래스의 로그값이 바뀌고, 정답 클래스만 남긴 뒤 합산해서 손실을 계산합니다.
+          <span className="font-mono text-slate-900">L = -Σ yᵢ ln(pᵢ)</span> 입니다.
+          원-핫 정답에서는 정답 클래스만 1이라서 결국 <span className="font-mono text-slate-900">-ln(p정답)</span>만 남습니다.
         </p>
       </div>
 
       <div className="grid gap-3 lg:grid-cols-2">
         <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
-          <div className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">1단계 - 로그 씌우기</div>
-          <div className="mt-2 font-mono text-sm text-slate-700">
+          <div className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">1. 예측 확률에 ln 적용</div>
+          <div className="mt-2 break-words font-mono text-sm leading-6 text-slate-700">
             [{probabilities.map((value) => MCCE.formatProbability(value)).join(", ")}] → [
             {lossBreakdown.loggedProbabilities.map((value) => MCCE.formatSigned(value)).join(", ")}]
           </div>
         </div>
 
         <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
-          <div className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">2단계 - 정답 곱하기</div>
-          <div className="mt-2 font-mono text-sm text-slate-700">
-            × [{lossBreakdown.oneHot.join(", ")}] → [
+          <div className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">2. 원-핫 정답으로 정답만 남김</div>
+          <div className="mt-2 break-words font-mono text-sm leading-6 text-slate-700">
+            y = [{lossBreakdown.oneHot.join(", ")}] → [
             {lossBreakdown.multipliedValues.map((value) => MCCE.formatSigned(value)).join(", ")}]
           </div>
         </div>
 
         <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
-          <div className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">3단계 - 합산</div>
-          <div className="mt-2 font-mono text-sm text-slate-700">{MCCE.formatSigned(lossBreakdown.summedValue)}</div>
+          <div className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">3. 합산</div>
+          <div className="mt-2 break-words font-mono text-sm leading-6 text-slate-700">
+            Σ yᵢ ln(pᵢ) = {MCCE.formatSigned(lossBreakdown.summedValue)}
+          </div>
         </div>
 
         <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
-          <div className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">4단계 - 부호 뒤집기</div>
-          <div className="mt-2 font-mono text-sm text-slate-700">{MCCE.formatSigned(lossBreakdown.loss)}</div>
+          <div className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">4. 마이너스를 붙여 손실 계산</div>
+          <div className="mt-2 break-words font-mono text-sm leading-6 text-slate-700">
+            L = -ln(p{selectedAnimal.label}) = -ln({MCCE.formatProbability(lossBreakdown.selectedProbability)}) = {lossBreakdown.loss.toFixed(3)}
+          </div>
         </div>
       </div>
     </section>
@@ -240,7 +245,11 @@ function MulticlassCrossEntropyDemo() {
             </section>
           </div>
 
-          <LossBreakdownCard lossBreakdown={lossBreakdown} probabilities={probabilities} />
+          <LossBreakdownCard
+            lossBreakdown={lossBreakdown}
+            probabilities={probabilities}
+            selectedAnimal={selectedAnimal}
+          />
         </div>
 
         <div className="grid gap-6">

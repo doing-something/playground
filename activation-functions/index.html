@@ -17,29 +17,38 @@
         .tab-list {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 0;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.28);
         }
 
         .tab-button {
-            padding: 8px 12px;
-            border: 1px solid rgba(148, 163, 184, 0.35);
-            border-radius: 999px;
-            background: #fff;
-            color: var(--text);
+            margin-bottom: -1px;
+            padding: 14px 20px;
+            border: 0;
+            border-bottom: 2px solid transparent;
+            background: transparent;
+            color: #334155;
             font: inherit;
             cursor: pointer;
+            transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
         }
 
         .tab-button:hover {
-            border-color: rgba(37, 99, 235, 0.45);
-            background: rgba(239, 246, 255, 0.8);
+            background: rgba(248, 250, 252, 0.92);
         }
 
         .tab-button-active {
-            border-color: rgba(37, 99, 235, 0.5);
-            background: rgba(219, 234, 254, 0.95);
+            border-bottom-color: #2563eb;
             color: #1d4ed8;
             font-weight: 600;
+        }
+
+        .activation-tabs {
+            grid-column: 1 / -1;
+            overflow: hidden;
+            border: 1px solid rgba(148, 163, 184, 0.24);
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.72);
         }
 
         .activation-controls {
@@ -81,12 +90,56 @@
         }
 
         .activation-analysis {
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            grid-template-columns: 1fr;
+        }
+
+        .math-display {
+            display: grid;
+            gap: 8px;
+            color: var(--text);
+        }
+
+        .math-line {
+            padding: 8px 10px;
+            border-radius: 10px;
+            background: rgba(148, 163, 184, 0.16);
+            font-family: "SF Mono", "Consolas", monospace;
+            font-size: 0.92rem;
+            line-height: 1.6;
+            overflow-wrap: anywhere;
+            white-space: normal;
+        }
+
+        .math-line strong {
+            color: #1d4ed8;
+        }
+
+        .math-note {
+            margin: 0;
+            font-size: 0.92rem;
+            line-height: 1.55;
+            color: var(--muted);
         }
 
         @media (min-width: 900px) {
             .layout {
-                grid-template-columns: 280px minmax(0, 1fr) 280px;
+                grid-template-columns: 280px minmax(0, 1fr);
+            }
+
+            .activation-analysis {
+                grid-column: 1 / -1;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        @media (min-width: 1180px) {
+            .layout {
+                grid-template-columns: 280px minmax(0, 1fr) 360px;
+            }
+
+            .activation-analysis {
+                grid-column: auto;
+                grid-template-columns: 1fr;
             }
         }
     </style>

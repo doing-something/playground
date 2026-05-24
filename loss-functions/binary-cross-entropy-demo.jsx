@@ -41,37 +41,41 @@ function BinaryLossBreakdownCard({ breakdown, probability }) {
   return (
     <section className="rounded-[28px] border border-slate-200 bg-slate-50/80 p-5 lg:p-6">
       <div className="mb-4">
-        <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-700">Step By Step</p>
-        <h3 className="mt-2 text-2xl font-bold tracking-[-0.03em] text-slate-900">계산 과정</h3>
+        <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-700">한 눈에 보기</p>
+        <h3 className="mt-2 text-2xl font-bold tracking-[-0.03em] text-slate-900">공식에서 현재 손실까지</h3>
         <p className="mt-2 text-sm leading-6 text-slate-600">
-          BCE는 <span className="font-semibold text-slate-900">y·ln(p)</span>와
-          <span className="font-semibold text-slate-900"> (1-y)·ln(1-p)</span> 두 항을 더한 뒤 부호를 뒤집습니다.
+          <span className="font-mono text-slate-900">L = -(y ln(p) + (1-y) ln(1-p))</span> 입니다.
+          y가 1이면 p 항만, y가 0이면 1-p 항만 남습니다.
         </p>
       </div>
 
       <div className="grid gap-3 lg:grid-cols-2">
         <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
-          <div className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">1단계 - y · ln(p)</div>
-          <div className="mt-2 font-mono text-sm text-slate-700">
+          <div className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">1. y ln(p)</div>
+          <div className="mt-2 break-words font-mono text-sm leading-6 text-slate-700">
             {breakdown.label} × ln({BCE.formatProbability(probability)}) = {BCE.formatSigned(breakdown.stepOneValue)}
           </div>
         </div>
 
         <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
-          <div className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">2단계 - (1-y) · ln(1-p)</div>
-          <div className="mt-2 font-mono text-sm text-slate-700">
+          <div className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">2. (1-y) ln(1-p)</div>
+          <div className="mt-2 break-words font-mono text-sm leading-6 text-slate-700">
             {breakdown.oneMinusLabel} × ln({BCE.formatProbability(breakdown.oneMinusProbability)}) = {BCE.formatSigned(breakdown.stepTwoValue)}
           </div>
         </div>
 
         <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
-          <div className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">3단계 - 합산</div>
-          <div className="mt-2 font-mono text-sm text-slate-700">{BCE.formatSigned(breakdown.summedValue)}</div>
+          <div className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">3. 괄호 안 합산</div>
+          <div className="mt-2 break-words font-mono text-sm leading-6 text-slate-700">
+            y ln(p) + (1-y) ln(1-p) = {BCE.formatSigned(breakdown.summedValue)}
+          </div>
         </div>
 
         <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
-          <div className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">4단계 - 부호 뒤집기</div>
-          <div className="mt-2 font-mono text-sm text-slate-700">{BCE.formatSigned(breakdown.loss)}</div>
+          <div className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">4. 마이너스를 붙여 손실 계산</div>
+          <div className="mt-2 break-words font-mono text-sm leading-6 text-slate-700">
+            L = -({BCE.formatSigned(breakdown.summedValue)}) = {BCE.formatSigned(breakdown.loss)}
+          </div>
         </div>
       </div>
     </section>

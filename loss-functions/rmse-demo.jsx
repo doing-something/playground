@@ -80,17 +80,18 @@ function RMSEBreakdownCard({ breakdown }) {
   return (
     <section className="rounded-[28px] border border-slate-200 bg-slate-50/80 p-5 lg:p-6">
       <div className="mb-4">
-        <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-700">Step By Step</p>
-        <h3 className="mt-2 text-2xl font-bold tracking-[-0.03em] text-slate-900">계산 과정</h3>
+        <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-700">한 눈에 보기</p>
+        <h3 className="mt-2 text-2xl font-bold tracking-[-0.03em] text-slate-900">공식에서 현재 RMSE까지</h3>
         <p className="mt-2 text-sm leading-6 text-slate-600">
-          각 집의 오차를 제곱해 더한 뒤 평균을 내고, 마지막에 루트를 씌워 집값 단위로 되돌립니다.
+          <span className="font-mono text-slate-900">RMSE = √((1/n) Σ(ŷᵢ - yᵢ)²)</span> 입니다.
+          각 집의 오차를 제곱해 평균낸 뒤 루트를 씌워 집값 단위로 되돌립니다.
         </p>
       </div>
 
       <div className="grid gap-3">
         <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
-          <div className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">1단계 - 오차</div>
-          <div className="mt-2 grid gap-2 font-mono text-sm text-slate-700">
+          <div className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">1. 오차 eᵢ = ŷᵢ - yᵢ</div>
+          <div className="mt-2 grid gap-2 break-words font-mono text-sm leading-6 text-slate-700">
             {breakdown.rows.map((row) => (
               <div key={row.id}>
                 {RMSE.formatBillions(row.prediction)} - {RMSE.formatBillions(row.actualPrice)} = {RMSE.formatSigned(row.error)}억
@@ -100,8 +101,8 @@ function RMSEBreakdownCard({ breakdown }) {
         </div>
 
         <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
-          <div className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">2단계 - 제곱</div>
-          <div className="mt-2 grid gap-2 font-mono text-sm text-slate-700">
+          <div className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">2. 제곱 오차 eᵢ²</div>
+          <div className="mt-2 grid gap-2 break-words font-mono text-sm leading-6 text-slate-700">
             {breakdown.rows.map((row) => (
               <div key={row.id}>
                 ({RMSE.formatSigned(row.error)})² = {RMSE.formatSigned(row.squaredError)}
@@ -111,16 +112,16 @@ function RMSEBreakdownCard({ breakdown }) {
         </div>
 
         <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
-          <div className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">3단계 - 평균</div>
-          <div className="mt-2 font-mono text-sm text-slate-700">
-            ({breakdown.rows.map((row) => RMSE.formatSigned(row.squaredError)).join(" + ")}) / {breakdown.rows.length} = {RMSE.formatSigned(breakdown.meanSquaredError)}
+          <div className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">3. 평균 제곱 오차</div>
+          <div className="mt-2 break-words font-mono text-sm leading-6 text-slate-700">
+            MSE = ({breakdown.rows.map((row) => RMSE.formatSigned(row.squaredError)).join(" + ")}) / {breakdown.rows.length} = {RMSE.formatSigned(breakdown.meanSquaredError)}
           </div>
         </div>
 
         <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
-          <div className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">4단계 - 루트</div>
-          <div className="mt-2 font-mono text-sm text-slate-700">
-            √{RMSE.formatSigned(breakdown.meanSquaredError)} = {RMSE.formatSigned(breakdown.rmse)}억
+          <div className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">4. 루트를 씌워 원래 단위로 복원</div>
+          <div className="mt-2 break-words font-mono text-sm leading-6 text-slate-700">
+            RMSE = √{RMSE.formatSigned(breakdown.meanSquaredError)} = {RMSE.formatSigned(breakdown.rmse)}억
           </div>
         </div>
       </div>

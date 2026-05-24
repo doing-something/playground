@@ -4,15 +4,17 @@ export const INTRO_HTML = `
 `;
 
 export const CONTROLS_HTML = `
-  <section class="control-panel activation-controls">
-    <div>
-      <h2>함수 선택</h2>
-      <p>활성화 함수별 입력을 바꿔 출력 변화를 비교합니다.</p>
-    </div>
+  <section class="activation-tabs">
     <div class="tab-list" role="tablist" aria-label="Activation functions">
       <button class="tab-button tab-button-active" id="tab-sigmoid" data-tab="sigmoid" type="button" role="tab" aria-selected="true" aria-controls="panel-sigmoid">Sigmoid</button>
       <button class="tab-button" id="tab-relu" data-tab="relu" type="button" role="tab" aria-selected="false" aria-controls="panel-relu">ReLU</button>
       <button class="tab-button" id="tab-softmax" data-tab="softmax" type="button" role="tab" aria-selected="false" aria-controls="panel-softmax">Softmax</button>
+    </div>
+  </section>
+  <section class="control-panel activation-controls">
+    <div>
+      <h2>입력 조정</h2>
+      <p>현재 선택한 활성화 함수의 입력값을 바꿉니다.</p>
     </div>
     <section class="activation-panel" id="panel-sigmoid" data-panel="sigmoid" role="tabpanel" aria-labelledby="tab-sigmoid">
       <label class="range-control" for="sigmoid-x">
@@ -54,16 +56,16 @@ export const CANVAS_HTML = `
 export const ANALYSIS_HTML = `
   <section class="explanation-panel activation-analysis">
     <article class="analysis-card">
-      <h3>함수</h3>
-      <code id="activation-formula">σ(x) = 1 / (1 + e^-x)</code>
+      <h3>공식</h3>
+      <div class="math-display" id="activation-formula"></div>
     </article>
     <article class="analysis-card">
-      <h3>입력</h3>
-      <code id="activation-input">x = 0</code>
+      <h3>현재 값 대입</h3>
+      <div class="math-display" id="activation-substitution"></div>
     </article>
     <article class="analysis-card">
-      <h3>출력</h3>
-      <code id="activation-output">0.5</code>
+      <h3>해석</h3>
+      <p class="summary-text" id="activation-interpretation"></p>
     </article>
   </section>
 `;
