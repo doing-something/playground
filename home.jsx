@@ -53,6 +53,12 @@ const DEMOS = [
     href: "./single-neuron-backpropagation/",
     title: "single-neuron-backpropagation",
   },
+  {
+    description:
+      "Batch, Stochastic, Mini-Batch Gradient Descent가 같은 업데이트 공식에서 어떤 데이터 묶음을 쓰는지만 다르다는 점을 Canvas로 비교합니다.",
+    href: "./gradient-descent-variants/",
+    title: "gradient-descent-variants",
+  },
 ];
 
 function HomePage() {

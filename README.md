@@ -11,6 +11,7 @@ GitHub Pages로 배포되어 있어 아래 링크에서 바로 열 수 있습니
 - [matrix-compose](https://doing-something.github.io/playground/matrix-compose/) — 행렬 곱 = 변환의 합성
 - [reshape](https://doing-something.github.io/playground/reshape/) — 같은 데이터를 다른 모양으로 reshape
 - [canvas-matrix](https://doing-something.github.io/playground/canvas-matrix/) — Canvas API가 내부에서 쌓는 3×3 affine 행렬
+- [gradient-descent-variants](https://doing-something.github.io/playground/gradient-descent-variants/) — Batch, Stochastic, Mini-Batch Gradient Descent 비교
 
 ## 시작
 

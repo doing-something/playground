@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gradient Descent Variants</title>
+    <link rel="stylesheet" href="../shared/demo.css">
+    <style>
+        main {
+            width: min(1180px, calc(100% - 32px));
+        }
+
+        .layout {
+            grid-template-columns: 1fr;
+        }
+
+        .method-field {
+            display: grid;
+            gap: 8px;
+            color: var(--muted);
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .method-field select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid rgba(148, 163, 184, 0.4);
+            border-radius: 12px;
+            background: #fff;
+            color: var(--text);
+            font: inherit;
+        }
+
+        .method-field select:focus {
+            outline: 2px solid rgba(37, 99, 235, 0.22);
+            border-color: rgba(37, 99, 235, 0.5);
+        }
+
+        .action-row {
+            display: grid;
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        .primary-button,
+        .secondary-button {
+            min-height: 44px;
+            border-radius: 12px;
+            font: inherit;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .primary-button {
+            border: 1px solid #1d4ed8;
+            background: #2563eb;
+            color: #fff;
+        }
+
+        .primary-button:hover {
+            background: #1d4ed8;
+        }
+
+        .secondary-button {
+            border: 1px solid rgba(148, 163, 184, 0.45);
+            background: #fff;
+            color: var(--text);
+        }
+
+        .secondary-button:hover {
+            border-color: rgba(37, 99, 235, 0.45);
+            background: rgba(239, 246, 255, 0.8);
+        }
+
+        .canvas-panel canvas {
+            max-width: 760px;
+        }
+
+        @media (min-width: 980px) {
+            .layout {
+                grid-template-columns: 220px minmax(0, 1fr) 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+    <script type="module" src="../dist/gradient-descent-variants/main.js"></script>
+</body>
+</html>
