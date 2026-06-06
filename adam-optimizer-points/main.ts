@@ -6,7 +6,7 @@ import { renderScene } from "./render.js";
 import { CANVAS_HTML, CONTROLS_HTML, INFO_HTML, INTRO_HTML } from "./templates.js";
 import { renderInfo, setupControls } from "./ui.js";
 
-const PLAY_INTERVAL_MS = 120;
+const PLAY_INTERVAL_MS = 24;
 
 function main() {
   renderDemoShell({
@@ -37,6 +37,19 @@ function main() {
   const step = () => {
     state = runTrainingStep(state);
     render();
+
+    if (!state.isPlaying && playTimer !== undefined) {
+      window.clearInterval(playTimer);
+      playTimer = undefined;
+    }
+  };
+
+  const stepWhilePlaying = () => {
+    if (!state.isPlaying) {
+      return;
+    }
+
+    step();
   };
 
   setupControls({
@@ -48,7 +61,8 @@ function main() {
       }
 
       state = { ...state, isPlaying: true };
-      playTimer = window.setInterval(step, PLAY_INTERVAL_MS);
+      step();
+      playTimer = window.setInterval(stepWhilePlaying, PLAY_INTERVAL_MS);
       render();
     },
     onReset: () => {

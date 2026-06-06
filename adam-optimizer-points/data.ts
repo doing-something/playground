@@ -16,7 +16,7 @@ export type AdamTrace = {
   gradient: Vector2;
   m: Vector2;
   mHat: Vector2;
-  update: Vector2;
+  stepDelta: Vector2;
   v: Vector2;
   vHat: Vector2;
 };
@@ -38,7 +38,7 @@ export type TrainingState = {
 export const ZERO_VECTOR: Vector2 = { x: 0, y: 0 };
 
 export const INITIAL_STATUS =
-  "learning.ts의 TODO를 채우면 Step과 Play에서 Adam 업데이트가 동작합니다.";
+  "Step을 누르면 Adam 업데이트를 한 번 실행한다.";
 
 export function createInitialTrainingState(): TrainingState {
   return {
@@ -65,7 +65,7 @@ function createEmptyTrace(): AdamTrace {
     gradient: { ...ZERO_VECTOR },
     m: { ...ZERO_VECTOR },
     mHat: { ...ZERO_VECTOR },
-    update: { ...ZERO_VECTOR },
+    stepDelta: { ...ZERO_VECTOR },
     v: { ...ZERO_VECTOR },
     vHat: { ...ZERO_VECTOR },
   };

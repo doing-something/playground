@@ -48,7 +48,7 @@ export function renderInfo(state: TrainingState) {
     elements.gradient.textContent = formatVector(selectedParticle.trace.gradient);
     elements.m.textContent = formatVector(selectedParticle.trace.m);
     elements.v.textContent = formatVector(selectedParticle.trace.v);
-    elements.update.textContent = formatVector(selectedParticle.trace.update);
+    elements.update.textContent = formatVector(selectedParticle.trace.stepDelta);
   }
 
   getControls().playButton.textContent = state.isPlaying ? "Pause" : "Play";

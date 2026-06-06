@@ -75,7 +75,7 @@ function drawSelectedVectors(ctx: CanvasRenderingContext2D, state: TrainingState
   drawLine(ctx, particle.current, particle.target, "rgba(15, 118, 110, 0.42)");
   drawVector(ctx, particle.current, particle.trace.gradient, "#dc2626", 0.08);
   drawVector(ctx, particle.current, particle.trace.m, "#7c3aed", 0.18);
-  drawVector(ctx, particle.current, particle.trace.update, "#059669", 18);
+  drawVector(ctx, particle.current, negateVector(particle.trace.stepDelta), "#059669", 18);
 }
 
 function drawLine(ctx: CanvasRenderingContext2D, from: Vector2, to: Vector2, color: string) {
@@ -119,4 +119,11 @@ function drawVector(
   ctx.arc(end.x, end.y, 4, 0, Math.PI * 2);
   ctx.fill();
   ctx.restore();
+}
+
+function negateVector(vector: Vector2): Vector2 {
+  return {
+    x: -vector.x,
+    y: -vector.y,
+  };
 }
