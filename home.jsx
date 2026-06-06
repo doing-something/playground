@@ -59,6 +59,12 @@ const DEMOS = [
     href: "./gradient-descent-variants/",
     title: "gradient-descent-variants",
   },
+  {
+    description:
+      "랜덤한 점들이 ADAM 글자 target으로 이동하는 Adam Optimizer 학습용 골격입니다. 핵심 업데이트 로직은 직접 채워 넣을 수 있게 비워 두었습니다.",
+    href: "./adam-optimizer-points/",
+    title: "adam-optimizer-points",
+  },
 ];
 
 function HomePage() {

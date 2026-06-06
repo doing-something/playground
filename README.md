@@ -12,6 +12,7 @@ GitHub Pages로 배포되어 있어 아래 링크에서 바로 열 수 있습니
 - [reshape](https://doing-something.github.io/playground/reshape/) — 같은 데이터를 다른 모양으로 reshape
 - [canvas-matrix](https://doing-something.github.io/playground/canvas-matrix/) — Canvas API가 내부에서 쌓는 3×3 affine 행렬
 - [gradient-descent-variants](https://doing-something.github.io/playground/gradient-descent-variants/) — Batch, Stochastic, Mini-Batch Gradient Descent가 한 번의 학습에 사용하는 데이터 점 개수만 다르다는 점을 시각화
+- [adam-optimizer-points](https://doing-something.github.io/playground/adam-optimizer-points/) — 점들이 ADAM 글자 target으로 이동하는 Adam Optimizer 학습용 골격
 
 ## 시작
 
