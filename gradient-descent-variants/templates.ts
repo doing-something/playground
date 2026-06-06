@@ -1,16 +1,15 @@
 import {
   CANVAS_ID,
-  LEARNING_RATE,
   METHOD_SELECT_ID,
   METHODS,
-  MINI_BATCH_SIZE,
   RESET_BUTTON_ID,
   STEP_BUTTON_ID,
 } from "./data.js";
 
 export const INTRO_HTML = `
-  같은 업데이트 공식에서 바뀌는 것은 gradient 계산에 쓰는 데이터 묶음입니다.
-  <code>batch_size = ${MINI_BATCH_SIZE}</code>, <code>learning_rate = ${LEARNING_RATE}</code>
+  weights는 파란 예측선을 정하는 값 [slope, bias]입니다.<br>
+  Gradient Descent는 데이터 점을 보고 weights를 조금씩 학습합니다.<br>
+  Batch, Stochastic, Mini-Batch의 차이는 한 번 학습할 때 사용하는 데이터 점 개수입니다.
 `;
 
 export const CONTROLS_HTML = `
@@ -23,8 +22,8 @@ export const CONTROLS_HTML = `
       </select>
     </label>
     <div class="action-row">
-      <button id="${STEP_BUTTON_ID}" class="primary-button" type="button">weights 1회 업데이트</button>
-      <button id="${RESET_BUTTON_ID}" class="secondary-button" type="button">weights 초기화</button>
+      <button id="${STEP_BUTTON_ID}" class="primary-button" type="button">weights 한 번 학습</button>
+      <button id="${RESET_BUTTON_ID}" class="secondary-button" type="button">weights 초기값으로</button>
     </div>
   </section>
 `;
@@ -59,7 +58,7 @@ export const INFO_HTML = `
     <div class="analysis-card">
       <h3>Status</h3>
       <p id="info-status" class="summary-text">
-        learning.ts의 TODO를 채우면 Step이 weights를 업데이트합니다.
+        learning.ts의 TODO를 채우면 weights 한 번 학습이 동작합니다.
       </p>
     </div>
   </section>

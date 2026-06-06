@@ -49,7 +49,7 @@ export function createInitialTrainingState(method: GradientMethod = "batch"): Tr
     lastUsedIndices: [],
     method,
     miniBatchCursor: 0,
-    statusMessage: "learning.ts의 TODO를 채우면 Step이 weights를 업데이트합니다.",
+    statusMessage: "learning.ts의 TODO를 채우면 weights 한 번 학습이 동작합니다.",
     stochasticCursor: 0,
     updateCount: 0,
     weights: [...INITIAL_WEIGHTS],
